@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vibe.io — Tamil Nadu's Student Developer Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.286.0/dist/lucide.min.js"></script>
+  <style>
+    /* ========= THEME ========= */
+    :root {
+      --vibe-primary: #7c3aed;      /* Violet */
+      --vibe-primary-hover: #6d28d9;  /* Deeper violet */
+      --vibe-accent: #0ea5e9;        /* Cyan accent */
+      --vibe-bg-start: #0f172a;      /* Navy */
+      --vibe-bg-end: #1e1b4b;        /* Indigo */
+      --vibe-surface: rgba(30, 41, 59, 0.6); /* Card surface on dark */
+      --vibe-border: rgba(148, 163, 184, 0.25);
+      --vibe-text: #e2e8f0;
+      --vibe-muted: #94a3b8;
+      --header-height: 72px;
+    }
+
+    /* Global */
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(135deg, var(--vibe-bg-start), var(--vibe-bg-end));
+      color: var(--vibe-text);
+    }
+
+    /* Utility/theme helpers */
+    .text-muted-2 { color: var(--vibe-muted) !important; }
+    .bg-dark-transparent { background-color: rgba(0, 0, 0, 0.55); backdrop-filter: saturate(120%) blur(6px); }
+    .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; }
+    .border-subtle { border-color: var(--vibe-border) !important; }
+
+    /* Buttons */
+    .btn.vibe-primary { background-color: var(--vibe-primary); color: #fff; border: none; }
+    .btn.vibe-primary:hover { background-color: var(--vibe-primary-hover); color: #fff; }
+    .btn.vibe-gradient {
+      background-image: linear-gradient(to right, var(--vibe-primary), var(--vibe-accent));
+      color: #fff; border: none;
+    }
+    .btn.vibe-gradient:hover { filter: brightness(1.08); }
+    .btn-outline-light { border-color: rgba(226,232,240,0.6); color: #fff; }
+    .btn-outline-light:hover { background-color: #fff !important; color: #1e1b4b !important; }
+
+    /* Focus styles (keyboard a11y) */
+    .btn:focus-visible, .nav-link:focus-visible, a.btn:focus-visible {
+      outline: 3px solid var(--vibe-accent); outline-offset: 2px;
+    }
+
+    /* Navbar */
+    .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
+    .navbar-dark .nav-link:hover { opacity: 1; }
+    .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
+
+    /* Hero decorative blobs (brighter for contrast) */
+    .decor-blob-1 {
+      left: -8rem; top: -10rem; width: 24rem; height: 24rem;
+      background: radial-gradient(closest-side, rgba(124,58,237,0.28), rgba(14,165,233,0.12) 70%, transparent);
+      filter: blur(70px);
+    }
+    .decor-blob-2 {
+      right: -6rem; bottom: -10rem; width: 36rem; height: 36rem;
+      background: radial-gradient(closest-side, rgba(14,165,233,0.22), rgba(124,58,237,0.12) 70%, transparent);
+      filter: blur(70px);
+    }
+
+    /* Badges */
+    .badge-brand { background-color: var(--vibe-primary); color: #fff; }
+    .badge-accent { background-color: var(--vibe-accent); color: #0b1221; }
+
+    /* Cards */
+    .card-header.chrome-dots .dot { width: 0.75rem; height: 0.75rem; }
+    .card-header.chrome-dots .dot.red { background:#ef4444; }
+    .card-header.chrome-dots .dot.yellow { background:#f59e0b; }
+    .card-header.chrome-dots .dot.green { background:#22c55e; }
+
+    /* Code snippet */
+    pre code { white-space: pre; }
+
+    /* Gradient card (ambassadors section fix for Tailwind-like classes) */
+    .card-brand-gradient {
+      background: linear-gradient(90deg, rgba(124,58,237,0.25), rgba(14,165,233,0.2));
+      border: 1px solid var(--vibe-border);
+    }
+
+    /* Footer */
+    footer a { color: var(--vibe-text); opacity: 0.9; }
+    footer a:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="min-vh-100 d-flex flex-column">
+    <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
+      <div class="container px-4 px-sm-3 px-lg-4">
+        <nav class="navbar navbar-expand-md navbar-dark">
+          <div class="container-fluid">
+            <a href="index.html" class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none">
+              <span class="fs-3 fw-bold">Vibe<span class="text-primary">.io</span></span>
+              <span class="ms-2 text-muted-2 small d-none d-sm-inline">Student Dev Community</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <i data-lucide="menu"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a href="#discussions" class="nav-link">Discussions</a></li>
+                <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="#events" class="nav-link">Events</a></li>
+                <li class="nav-item"><a href="#ambassadors" class="nav-link">Ambassadors</a></li>
+              </ul>
+              <div class="ms-auto d-flex gap-3">
+                <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
+                <a href="signup.html" class="btn vibe-gradient">Join for Free</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-grow-1">
+      <section class="position-relative overflow-hidden">
+        <div class="position-absolute top-0 start-0 w-100 h-100 pointer-events-none" aria-hidden="true">
+          <div class="position-absolute rounded-circle decor-blob-1"></div>
+          <div class="position-absolute rounded-circle decor-blob-2"></div>
+        </div>
+
+        <div class="container py-5 py-md-7 py-lg-8 position-relative" style="padding-top: 4rem;">
+          <div class="row align-items-center">
+            <div class="col-lg-6">
+              <span class="badge badge-brand mb-3">• For Coding Students All Over TN</span>
+              <h1 class="display-5 fw-bold">Connect, Code, Conquer. Tamil Nadu's Student Developer Hub.</h1>
+              <p class="text-muted-2 mt-3">Join a thriving community of student programmers from across the state. Share your projects, crush coding challenges, and vibe with the best minds in TN.</p>
+
+              <div class="mt-4 d-flex flex-wrap gap-3">
+                <a href="signup.html" id="cta-join" class="btn vibe-gradient btn-lg">Join the Vibe</a>
+                <a href="#projects" class="btn btn-outline-light">Explore Projects</a>
+              </div>
+
+              <div class="mt-4 small">
+                <span class="me-2 text-muted-2">Trusted by students at</span>
+                <span class="badge badge-accent me-1">KRCT</span>
+                <span class="badge badge-accent me-1">KRCE</span>
+                <span class="badge badge-accent">SASTRA Univ</span>
+              </div>
+            </div>
+
+            <div class="col-lg-6 mt-4 mt-lg-0">
+              <div class="card card-surface border shadow-lg">
+                <div class="card-header chrome-dots d-flex justify-content-between align-items-center">
+                  <div class="d-flex gap-2 align-items-center">
+                    <span class="rounded-circle dot red"></span>
+                    <span class="rounded-circle dot yellow"></span>
+                    <span class="rounded-circle dot green"></span>
+                  </div>
+                  <div class="text-muted-2 small">vibe-terminal</div>
+                </div>
+                <div class="card-body">
+<pre class="small m-0 text-white"><code class="language-js">// Start building together
+function greet(name) {
+  return `Hey ${name}, welcome to Vibe.io!`;
+}
+
+console.log(greet('friend'));</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="container py-5">
+        <div class="text-center">
+          <h2 class="h3 fw-bold">Everything You Need to Grow</h2>
+          <p class="text-muted-2 mt-2">Tools, people, and opportunities — all in one place to help you level up as a student developer.</p>
+        </div>
+
+        <div class="mt-4 row row-cols-1 row-cols-md-3 g-4">
+          <div class="col">
+            <div class="card h-100 card-surface border text-white">
+              <div class="card-body d-flex gap-3">
+                <div class="p-2 rounded border border-subtle">
+                  <i data-lucide="message-square" class="text-white-50"></i>
+                </div>
+                <div>
+                  <h3 class="h5 fw-semibold">Collaborative Forums</h3>
+                  <p class="text-muted-2 small mb-0">Ask questions, share solutions, and discuss the latest tech trends in our code-friendly forums with syntax highlighting.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card h-100 card-surface border text-white">
+              <div class="card-body d-flex gap-3">
+                <div class="p-2 rounded border border-subtle">
+                  <i data-lucide="code" class="text-white-50"></i>
+                </div>
+                <div>
+                  <h3 class="h5 fw-semibold">Project Showcase</h3>
+                  <p class="text-muted-2 small mb-0">Show off your personal projects, get valuable feedback, and find collaborators for your next big idea.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card h-100 card-surface border text-white">
+              <div class="card-body d-flex gap-3">
+                <div class="p-2 rounded border border-subtle">
+                  <i data-lucide="award" class="text-white-50"></i>
+                </div>
+                <div>
+                  <h3 class="h5 fw-semibold">Coding Challenges</h3>
+                  <p class="text-muted-2 small mb-0">Sharpen your skills with weekly coding problems and compete in regular hackathons to win prizes and recognition.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="events" class="py-5" style="background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.2));">
+        <div class="container">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h2 class="h3 fw-bold">What's On?</h2>
+              <p class="text-muted-2 mb-0">Join upcoming workshops, hackathons, and community meetups.</p>
+            </div>
+            <a href="#events" class="text-decoration-none fw-semibold small" style="color: var(--vibe-accent);">View all events</a>
+          </div>
+          <div class="mt-4">
+            <p class="text-muted-2">No events organized yet. Be the first to host one as an ambassador!</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="ambassadors" class="container py-5">
+        <div class="card card-brand-gradient shadow-lg">
+          <div class="card-body p-4 p-md-5">
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <h2 class="h3 fw-bold text-white">Become a Leader. Become a Vibe Ambassador.</h2>
+                <p class="text-muted-2 mt-3">Represent Vibe.io at your college, gain leadership experience, and get exclusive perks. A perfect addition to your resume.</p>
+                <ul class="mt-3 text-muted-2 small list-unstyled mb-0">
+                  <li>• Host workshops and hack nights</li>
+                  <li>• Grow your professional network</li>
+                  <li>• Earn swag and priority event access</li>
+                </ul>
+              </div>
+              <div class="col-md-4 mt-3 mt-md-0 text-md-end">
+                <a href="apply-ambassador.html" class="btn vibe-gradient">Learn More &amp; Apply</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="discussions" class="container py-5">
+        <h3 class="h4 fw-semibold">Discussions</h3>
+        <p class="text-muted-2 mb-0">A lively place for threads, help, and knowledge sharing. (Coming soon)</p>
+      </section>
+
+      <section id="projects" class="container py-5">
+        <h3 class="h4 fw-semibold">Projects</h3>
+        <p class="text-muted-2 mb-0">Showcase and get feedback on your work. (Coming soon)</p>
+      </section>
+    </main>
+
+    <footer class="border-top border-subtle mt-4">
+      <div class="container py-4">
+        <div class="row align-items-center">
+          <div class="col-md-6 d-flex align-items-center gap-3">
+            <div class="text-white fw-bold">Vibe.io</div>
+            <nav class="d-flex gap-3">
+              <a href="#about" class="small text-decoration-none">About</a>
+              <a href="#guidelines" class="small text-decoration-none">Guidelines</a>
+              <a href="#contact" class="small text-decoration-none">Contact</a>
+            </nav>
+          </div>
+          <div class="col-md-6 mt-3 mt-md-0 d-flex align-items-center gap-3 justify-content-md-end">
+            <a href="#" class="p-2 rounded"><i data-lucide="github"></i></a>
+            <a href="#" class="p-2 rounded"><i data-lucide="twitter"></i></a>
+            <a href="#" class="p-2 rounded"><i data-lucide="linkedin"></i></a>
+            <div class="small text-muted-2">© 2025 Vibe.io - Built by students, for students.</div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <script>
+    // Ensure Lucide icons render after DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof lucide !== 'undefined') lucide.replace();
+    });
+
+    // Smooth scrolling with header offset (for in-page links)
+    function offsetScrollTo(hash) {
+      const el = document.querySelector(hash);
+      if (!el) return;
+      const y = el.getBoundingClientRect().top + window.pageYOffset - parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 72;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    // Intercept in-page anchors
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const href = a.getAttribute('href');
+        if (href && href.length > 1 && href.startsWith('#')) {
+          const target = href;
+          const el = document.querySelector(target);
+          if (el) {
+            e.preventDefault();
+            offsetScrollTo(target);
+            // Close Bootstrap navbar after navigation (mobile)
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+              const instance = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse, { toggle: false });
+              instance.hide();
+            }
+          }
+        }
+      });
+    });
+
+    // Accessibility: close navbar with Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const navbarCollapse = document.querySelector('.navbar-collapse');
+        if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+          const instance = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse, { toggle: false });
+          instance.hide();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
