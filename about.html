@@ -11,6 +11,11 @@
     :root {
       --vibe-primary: #7c3aed; --vibe-accent: #0ea5e9; --vibe-bg-start: #0f172a; --vibe-bg-end: #1e1b4b; --vibe-surface: rgba(30, 41, 59, 0.6); --vibe-border: rgba(148, 163, 184, 0.25); --vibe-text: #e2e8f0; --vibe-muted: #94a3b8;
     }
+     /* Utility/theme helpers */
+    .text-muted-2 { color: var(--vibe-muted) !important; }
+    .bg-dark-transparent { background-color: rgba(0, 0, 0, 0.55); backdrop-filter: saturate(120%) blur(6px); }
+    .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; }
+    .border-subtle { border-color: var(--vibe-border) !important; }
     body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--vibe-bg-start), var(--vibe-bg-end)) fixed; color: var(--vibe-text); }
     .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; backdrop-filter: saturate(120%) blur(6px); }
     .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
