@@ -26,6 +26,16 @@
     .text-muted-2 { color: var(--vibe-muted) !important; }
     .link-accent { color: var(--vibe-accent); text-decoration: none; }
     .link-accent:hover { color: #38bdf8; }
+    /* Buttons */
+    .btn.vibe-primary { background-color: var(--vibe-primary); color: #fff; border: none; }
+    .btn.vibe-primary:hover { background-color: var(--vibe-primary-hover); color: #fff; }
+    .btn.vibe-gradient {
+      background-image: linear-gradient(to right, var(--vibe-primary), var(--vibe-accent));
+      color: #fff; border: none;
+    }
+    .btn.vibe-gradient:hover { filter: brightness(1.08); }
+    .btn-outline-light { border-color: rgba(226,232,240,0.6); color: #fff; }
+    .btn-outline-light:hover { background-color: #fff !important; color: #1e1b4b !important; }
     /* Navbar */
     .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
     .navbar-dark .nav-link:hover { opacity: 1; }
