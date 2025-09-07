@@ -32,10 +32,13 @@
     .btn.vibe-gradient:hover { filter: brightness(1.08); }
     .btn-outline-light { border-color: rgba(226,232,240,0.6); color: #fff; }
     .btn-outline-light:hover { background-color: #fff !important; color: #1e1b4b !important; }
-    /* Navbar */
+    /* Navbar */ 
     .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
     .navbar-dark .nav-link:hover { opacity: 1; }
     .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
+    /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
+  .navbar-toggler, .navbar-toggler:focus { color: var(--vibe-text); border: none; }
+  .navbar-toggler i, .navbar-toggler svg { color: var(--vibe-text); width: 1.25rem; height: 1.25rem; stroke-width: 1.5; }
     /* Footer */
     footer a { color: var(--vibe-text); opacity: 0.9; }
     footer a:hover { opacity: 1; }
@@ -62,6 +65,7 @@
                 <li class="nav-item"><a href="index.html#projects" class="nav-link">Projects</a></li>
                 <li class="nav-item"><a href="index.html#events" class="nav-link">Events</a></li>
                 <li class="nav-item"><a href="index.html#ambassadors" class="nav-link">Ambassadors</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
               </ul>
               <div class="ms-auto d-flex gap-3">
                 <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>

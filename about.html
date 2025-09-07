@@ -22,7 +22,7 @@
     .btn.vibe-gradient {
       background-image: linear-gradient(to right, var(--vibe-primary), var(--vibe-accent));
       color: #fff; border: none;
-    }
+    } 
     .btn.vibe-gradient:hover { filter: brightness(1.08); }
     .btn-outline-light { border-color: rgba(226,232,240,0.6); color: #fff; }
     .btn-outline-light:hover { background-color: #fff !important; color: #1e1b4b !important; }
@@ -30,12 +30,27 @@
     .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
     .navbar-dark .nav-link:hover { opacity: 1; }
     .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
+    /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
+    .navbar-toggler, .navbar-toggler:focus {
+      color: var(--vibe-text);
+      border: none;
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+    .navbar-toggler i, .navbar-toggler svg {
+      color: var(--vibe-text) !important;
+      width: 1.25rem; height: 1.25rem; stroke-width: 1.5;
+      stroke: currentColor !important; fill: none !important;
+    }
     body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--vibe-bg-start), var(--vibe-bg-end)) fixed; color: var(--vibe-text); }
     .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; backdrop-filter: saturate(120%) blur(6px); }
     .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
     .text-muted-2 { color: var(--vibe-muted) !important; }
     .text-accent { color: var(--vibe-accent); }
     .icon-box { background-color: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.2); }
+    /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
+  .navbar-toggler, .navbar-toggler:focus { color: var(--vibe-text); border: none; }
+  .navbar-toggler i, .navbar-toggler svg { color: var(--vibe-text); width: 1.25rem; height: 1.25rem; stroke-width: 1.5; }
     /* Footer */
     footer a { color: var(--vibe-text); opacity: 0.9; }
     footer a:hover { opacity: 1; }
@@ -63,6 +78,7 @@
                 <li class="nav-item"><a href="index.html#projects" class="nav-link">Projects</a></li>
                 <li class="nav-item"><a href="index.html#events" class="nav-link">Events</a></li>
                 <li class="nav-item"><a href="index.html#ambassadors" class="nav-link">Ambassadors</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
               </ul>
               <div class="ms-auto d-flex gap-3">
                 <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>

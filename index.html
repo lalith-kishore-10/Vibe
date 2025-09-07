@@ -56,6 +56,21 @@
     .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
     .navbar-dark .nav-link:hover { opacity: 1; }
     .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
+  /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
+  .navbar-toggler, .navbar-toggler:focus {
+    color: var(--vibe-text);
+    border: none;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+  /* Ensure lucide-generated SVG uses currentColor so it follows the CSS color */
+  .navbar-toggler i, .navbar-toggler svg {
+    color: var(--vibe-text) !important;
+    width: 1.25rem; height: 1.25rem;
+    stroke-width: 1.5;
+    stroke: currentColor !important;
+    fill: none !important;
+  }
 
     /* Hero decorative blobs (brighter for contrast) */
     .decor-blob-1 {
@@ -67,7 +82,7 @@
       right: -6rem; bottom: -10rem; width: 36rem; height: 36rem;
       background: radial-gradient(closest-side, rgba(14,165,233,0.22), rgba(124,58,237,0.12) 70%, transparent);
       filter: blur(70px);
-    }
+    } 
 
     /* Badges */
     .badge-brand { background-color: var(--vibe-primary); color: #fff; }
@@ -87,7 +102,9 @@
       background: linear-gradient(90deg, rgba(124,58,237,0.25), rgba(14,165,233,0.2));
       border: 1px solid var(--vibe-border);
     }
-
+    /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
+  .navbar-toggler, .navbar-toggler:focus { color: var(--vibe-text); border: none; }
+  .navbar-toggler i, .navbar-toggler svg { color: var(--vibe-text); width: 1.25rem; height: 1.25rem; stroke-width: 1.5; }
     /* Footer */
     footer a { color: var(--vibe-text); opacity: 0.9; }
     footer a:hover { opacity: 1; }
@@ -114,6 +131,7 @@
                 <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
                 <li class="nav-item"><a href="#events" class="nav-link">Events</a></li>
                 <li class="nav-item"><a href="#ambassadors" class="nav-link">Ambassadors</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
               </ul>
               <div class="ms-auto d-flex gap-3">
                 <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
