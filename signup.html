@@ -140,5 +140,46 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.286.0/dist/lucide.min.js"></script>
     <script>document.addEventListener('DOMContentLoaded', ()=>{ if(typeof lucide!=='undefined') lucide.replace(); });</script>
   </div>
+
+  <!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  // Initialize Supabase client
+  const supabase = supabase.createClient(
+    "https://poekchmrknttynedwpwm.supabase.co",  // replace with your Supabase Project URL
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"                          // replace with your Supabase Anon Key
+  );
+
+  // Handle signup form
+  document.querySelector("form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const fullName = document.getElementById("fullName").value;
+    const email = document.getElementById("email").value;
+    const college = document.getElementById("college").value;
+    const password = document.getElementById("password").value;
+
+    // Create account with Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          college: college
+        }
+      }
+    });
+
+    if (error) {
+      alert("Signup failed: " + error.message);
+    } else {
+      alert("Signup successful! Please check your email to confirm your account.");
+      // redirect to login page
+      window.location.href = "login.html";
+    }
+  });
+</script>
+  
 </body>
 </html>
