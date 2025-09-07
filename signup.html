@@ -5,181 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sign Up — Vibe.io</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    :root {
-      --vibe-primary: #7c3aed; --vibe-primary-hover: #6d28d9; --vibe-accent: #0ea5e9; --vibe-bg-start: #0f172a; --vibe-bg-end: #1e1b4b; --vibe-surface: rgba(30, 41, 59, 0.6); --vibe-border: rgba(148, 163, 184, 0.25); --vibe-text: #e2e8f0; --vibe-muted: #94a3b8;
-    }
-     /* Utility/theme helpers */
-    .text-muted-2 { color: var(--vibe-muted) !important; }
-    .bg-dark-transparent { background-color: rgba(0, 0, 0, 0.55); backdrop-filter: saturate(120%) blur(6px); }
-    .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; }
-    .border-subtle { border-color: var(--vibe-border) !important; }
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--vibe-bg-start), var(--vibe-bg-end)); color: var(--vibe-text); }
-    .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; backdrop-filter: saturate(120%) blur(6px); }
-    .btn.vibe-gradient { background-image: linear-gradient(to right, var(--vibe-primary), var(--vibe-accent)); color: #fff; border: none; }
-    .btn.vibe-gradient:hover { filter: brightness(1.08); }
-    .form-control { background-color: rgba(0,0,0,0.2); border-color: var(--vibe-border); color: var(--vibe-text); }
-    .form-control:focus { background-color: rgba(0,0,0,0.3); border-color: var(--vibe-accent); color: var(--vibe-text); box-shadow: 0 0 0 0.25rem rgba(14, 165, 233, 0.25); }
-    .form-control::placeholder { color: var(--vibe-muted); }
-    .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
-    .text-muted-2 { color: var(--vibe-muted) !important; }
-    .link-accent { color: var(--vibe-accent); text-decoration: none; }
-    .link-accent:hover { color: #38bdf8; }
-    /* Buttons */
-    .btn.vibe-primary { background-color: var(--vibe-primary); color: #fff; border: none; }
-    .btn.vibe-primary:hover { background-color: var(--vibe-primary-hover); color: #fff; }
-    .btn.vibe-gradient {
-      background-image: linear-gradient(to right, var(--vibe-primary), var(--vibe-accent));
-      color: #fff; border: none;
-    }
-    .btn.vibe-gradient:hover { filter: brightness(1.08); }
-    .btn-outline-light { border-color: rgba(226,232,240,0.6); color: #fff; }
-    .btn-outline-light:hover { background-color: #fff !important; color: #1e1b4b !important; }
-    /* Navbar */
-    .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
-    .navbar-dark .nav-link:hover { opacity: 1; }
-    .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
-    /* Footer */
-    footer a { color: var(--vibe-text); opacity: 0.9; }
-    footer a:hover { opacity: 1; }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a, #1e1b4b); color: #e2e8f0; }
+    .card-surface { background: rgba(30, 41, 59, 0.6); border-color: rgba(148, 163, 184, 0.25); backdrop-filter: blur(6px); }
+    .btn.vibe-gradient { background-image: linear-gradient(to right, #7c3aed, #0ea5e9); color: #fff; border: none; }
   </style>
 </head>
 <body>
-  <div class="min-vh-100 d-flex flex-column">
-    <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
-      <div class="container px-4 px-sm-3 px-lg-4">
-        <nav class="navbar navbar-expand-md navbar-dark">
-          <div class="container-fluid">
-            <a href="index.html" class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none">
-              <span class="fs-3 fw-bold">Vibe<span class="text-primary">.io</span></span>
-              <span class="ms-2 text-muted-2 small d-none d-sm-inline">Student Dev Community</span>
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <i data-lucide="menu"></i>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a href="index.html#discussions" class="nav-link">Discussions</a></li>
-                <li class="nav-item"><a href="index.html#projects" class="nav-link">Projects</a></li>
-                <li class="nav-item"><a href="index.html#events" class="nav-link">Events</a></li>
-                <li class="nav-item"><a href="index.html#ambassadors" class="nav-link">Ambassadors</a></li>
-              </ul>
-              <div class="ms-auto d-flex gap-3">
-                <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
-                <a href="signup.html" class="btn vibe-gradient">Join for Free</a>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
-    </header>
-
-    <main class="d-flex align-items-center flex-grow-1">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-7 col-lg-6 col-xl-5">
-            <div class="card card-surface shadow-lg text-white">
-              <div class="card-body p-4 p-lg-5">
-                <h2 class="h3 fw-bold text-center mb-4">Join the Community</h2>
-                <form>
-                  <div class="mb-3">
-                    <label for="fullName" class="form-label small">Full Name</label>
-                    <input type="text" class="form-control" id="fullName" placeholder="Your Name" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="email" class="form-label small">Email address</label>
-                    <input type="email" class="form-control" id="email" placeholder="example@gmail.com" required>
-                  </div>
-                   <div class="mb-3">
-                    <label for="college" class="form-label small">College / University</label>
-                    <input type="text" class="form-control" id="college" placeholder="Name of your institution" required>
-                  </div>
-                  <div class="mb-4">
-                    <label for="password" class="form-label small">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Create a strong password" required>
-                  </div>
-                  <div class="d-grid">
-                    <button type="submit" class="btn vibe-gradient btn-lg">Create Account</button>
-                  </div>
-                </form>
-                <p class="text-center text-muted-2 small mt-4 mb-0">
-                  Already have an account? <a href="login.html" class="link-accent fw-semibold">Login</a>
-                </p>
-              </div>
+  <main class="d-flex align-items-center min-vh-100">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6 col-xl-5">
+          <div class="card card-surface shadow-lg text-white">
+            <div class="card-body p-4 p-lg-5">
+              <h2 class="h3 fw-bold text-center mb-4">Join the Community</h2>
+              <form id="signup-form">
+                <div class="mb-3">
+                  <label for="fullName" class="form-label small">Full Name</label>
+                  <input type="text" class="form-control" id="fullName" required>
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label small">Email</label>
+                  <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                  <label for="college" class="form-label small">College / University</label>
+                  <input type="text" class="form-control" id="college" required>
+                </div>
+                <div class="mb-4">
+                  <label for="password" class="form-label small">Password</label>
+                  <input type="password" class="form-control" id="password" required>
+                </div>
+                <div class="d-grid">
+                  <button type="submit" class="btn vibe-gradient btn-lg">Create Account</button>
+                </div>
+              </form>
+              <p class="text-center small mt-4 mb-0">Already have an account? <a href="login.html" class="text-info">Login</a></p>
             </div>
           </div>
         </div>
       </div>
-    </main>
-
-    <footer class="border-top border-subtle mt-4">
-      <div class="container py-4">
-        <div class="row align-items-center">
-          <div class="col-md-6 d-flex align-items-center gap-3">
-            <div class="text-white fw-bold"><a href="index.html">Vibe.io</a></div>
-            <nav class="d-flex gap-3">
-              <a href="about.html" class="small text-decoration-none">About</a>
-              <a href="guidelines.html" class="small text-decoration-none">Guidelines</a>
-              <a href="contact.html" class="small text-decoration-none">Contact</a>
-            </nav>
-          </div>
-          <div class="col-md-6 mt-3 mt-md-0 d-flex align-items-center gap-3 justify-content-md-end">
-            <a href="#" class="p-2 rounded"><i data-lucide="github"></i></a>
-            <a href="#" class="p-2 rounded"><i data-lucide="twitter"></i></a>
-            <a href="#" class="p-2 rounded"><i data-lucide="linkedin"></i></a>
-            <div class="small text-muted-2">© 2025 Vibe.io - Built by students, for students.</div>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@0.286.0/dist/lucide.min.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', ()=>{ if(typeof lucide!=='undefined') lucide.replace(); });</script>
-  </div>
+    </div>
+  </main>
 
   <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  // Initialize Supabase client
-  const supabase = supabase.createClient(
-    "https://poekchmrknttynedwpwm.supabase.co",  // replace with your Supabase Project URL
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"                          // replace with your Supabase Anon Key
-  );
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseClient = supabase.createClient(
+      "https://poekchmrknttynedwpwm.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"
+    );
 
-  // Handle signup form
-  document.querySelector("form").addEventListener("submit", async (e) => {
-    e.preventDefault();
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fullName = document.getElementById("fullName").value;
+      const email = document.getElementById("email").value;
+      const college = document.getElementById("college").value;
+      const password = document.getElementById("password").value;
 
-    const fullName = document.getElementById("fullName").value;
-    const email = document.getElementById("email").value;
-    const college = document.getElementById("college").value;
-    const password = document.getElementById("password").value;
+      // Step 1: Create Auth User
+      const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+        email, password
+      });
+      if (signUpError) return alert("Signup error: " + signUpError.message);
 
-    // Create account with Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          college: college
-        }
+      const user = signUpData.user;
+      if (!user) return alert("Signup failed: no user returned");
+
+      // Step 2: Insert into Profiles
+      const { error: insertError } = await supabaseClient
+        .from("profiles")
+        .insert([{ id: user.id, full_name: fullName, college: college }]);
+
+      if (insertError) {
+        alert("Profile insert failed: " + insertError.message);
+      } else {
+        alert("Signup successful! Please confirm your email before login.");
+        window.location.href = "login.html";
       }
     });
-
-    if (error) {
-      alert("Signup failed: " + error.message);
-    } else {
-      alert("Signup successful! Please check your email to confirm your account.");
-      // redirect to login page
-      window.location.href = "login.html";
-    }
-  });
-</script>
-  
+  </script>
 </body>
 </html>
