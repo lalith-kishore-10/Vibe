@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Profile</title>
+</head>
+<body>
+  <h2>User Profile</h2>
+  <div id="profile"></div>
+  <button id="logout">Logout</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseClient = supabase.createClient(
+      "https://poekchmrknttynedwpwm.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"
+    );
+
+    async function loadProfile() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) {
+        alert("Not logged in");
+        return window.location.href = "login.html";
+      }
+
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("full_name, college, id")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        document.getElementById("profile").innerText = "Error: " + error.message;
+      } else {
+        document.getElementById("profile").innerHTML = `
+          <p><b>Name:</b> ${data.full_name}</p>
+          <p><b>College:</b> ${data.college}</p>
+          <p><b>User ID:</b> ${data.id}</p>
+          <p><b>Email:</b> ${user.email}</p>
+        `;
+      }
+    }
+
+    document.getElementById("logout").addEventListener("click", async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = "login.html";
+    });
+
+    loadProfile();
+  </script>
+</body>
+</html>
