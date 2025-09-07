@@ -315,8 +315,42 @@ console.log(greet('friend'));</code></pre>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
 
   <script>
+    // Supabase config
+    const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co'; // <-- Replace with your Supabase URL
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA'; // <-- Replace with your Supabase anon key
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Helper: Hide element by selector
+    function hideSelector(sel) {
+      document.querySelectorAll(sel).forEach(e => e.style.display = 'none');
+    }
+    function showSelector(sel) {
+      document.querySelectorAll(sel).forEach(e => e.style.display = '');
+    }
+
+    // Hide protected areas by default
+    hideSelector('[href="#discussions"], [href="#projects"], [href="#events"], [href="#ambassadors"], #discussions, #projects, #events, #ambassadors, [href="apply-ambassador.html"]');
+
+    // Only show About and Guidelines in footer for unauthenticated users
+    document.querySelectorAll('footer nav a').forEach(a => {
+      if (!['about.html', 'guidelines.html'].includes(a.getAttribute('href'))) {
+        a.style.display = 'none';
+      }
+    });
+
+    // Check auth state
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        // User is logged in: show protected areas
+        showSelector('[href="#discussions"], [href="#projects"], [href="#events"], [href="#ambassadors"], #discussions, #projects, #events, #ambassadors, [href="apply-ambassador.html"]');
+        // Show all footer links
+        document.querySelectorAll('footer nav a').forEach(a => { a.style.display = ''; });
+      }
+    });
     // Ensure Lucide icons render after DOM ready
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof lucide !== 'undefined') lucide.replace();
