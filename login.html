@@ -40,17 +40,11 @@
     .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
     .navbar-dark .nav-link:hover { opacity: 1; }
     .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
-  /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
-  .navbar-toggler, .navbar-toggler:focus { color: var(--vibe-text); border: none; }
-  .navbar-toggler i, .navbar-toggler svg { color: var(--vibe-text); width: 1.25rem; height: 1.25rem; stroke-width: 1.5; }
-    /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
-  .navbar-toggler, .navbar-toggler:focus { color: var(--vibe-text); border: none; }
-  .navbar-toggler i, .navbar-toggler svg { color: var(--vibe-text); width: 1.25rem; height: 1.25rem; stroke-width: 1.5; }
     /* Footer */
     footer a { color: var(--vibe-text); opacity: 0.9; }
     footer a:hover { opacity: 1; }
   </style>
-</head> 
+</head>
 <body>
   <div class="min-vh-100 d-flex flex-column">
     <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
@@ -72,7 +66,6 @@
                 <li class="nav-item"><a href="index.html#projects" class="nav-link">Projects</a></li>
                 <li class="nav-item"><a href="index.html#events" class="nav-link">Events</a></li>
                 <li class="nav-item"><a href="index.html#ambassadors" class="nav-link">Ambassadors</a></li>
-                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
               </ul>
               <div class="ms-auto d-flex gap-3">
                 <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
@@ -138,5 +131,33 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.286.0/dist/lucide.min.js"></script>
     <script>document.addEventListener('DOMContentLoaded', ()=>{ if(typeof lucide!=='undefined') lucide.replace(); });</script>
   </div>
+
+  <!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  const supabase = supabase.createClient(
+    "https://poekchmrknttynedwpwm.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"
+  );
+
+  document.querySelector("form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      alert("Login failed: " + error.message);
+    } else {
+      alert("Login successful! Welcome " + data.user.email);
+      window.location.href = "profile.html";
+    }
+  });
+</script>
+  
 </body>
 </html>
