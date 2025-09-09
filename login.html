@@ -224,15 +224,17 @@
 
     // Check if user is already logged in and redirect if so
     try {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session && session.user) {
-        debug('User already logged in, redirecting...');
-        window.location.href = 'index.html';
-        return;
-      }
-    } catch (e) {
-      console.warn('Error checking session:', e);
-    }
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  console.log('Session:', session);
+  console.log('Session error:', error);
+  if (session && session.user) {
+    debug('User already logged in, redirecting...');
+    window.location.href = 'index.html';
+    return;
+  }
+} catch (e) {
+  console.warn('Error checking session:', e);
+}
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
