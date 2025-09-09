@@ -188,13 +188,22 @@
 
       // Try to import local module first; if that fails (often when opening via file://), fall back to CDN global client
       let supabaseClient = null;
+      const debugEl = document.getElementById('login-debug');
+      function debug(msg) {
+        try { console.debug(msg); } catch(e){}
+        if (!debugEl) return;
+        debugEl.style.display = 'block';
+        debugEl.textContent = (debugEl.textContent ? debugEl.textContent + '\n' : '') + String(msg);
+      }
+
       try {
+        debug('Attempting to import ./supabase.js');
         const mod = await import('./supabase.js');
-        // `supabase.js` exports `supabase`
         supabaseClient = mod.supabase;
-        console.info('Using supabase from ./supabase.js');
+        debug('Using supabase from ./supabase.js');
       } catch (err) {
-        console.warn('Dynamic import of ./supabase.js failed, falling back to CDN client. Error:', err);
+        debug('Import ./supabase.js failed: ' + err);
+        debug('Falling back to CDN client');
         try {
           await new Promise((resolve, reject) => {
             const s = document.createElement('script');
@@ -203,14 +212,36 @@
             s.onerror = reject;
             document.head.appendChild(s);
           });
-          // fallback to creating client using same credentials from supabase.js
-          supabaseClient = window.supabase.createClient(
-            'https://poekchmrknttynedwpwm.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA'
-          );
-          console.info('Using Supabase CDN fallback client');
+          debug('CDN script loaded; checking for window.supabase');
+
+          if (window.supabase && typeof window.supabase.createClient === 'function') {
+            supabaseClient = window.supabase.createClient(
+              'https://poekchmrknttynedwpwm.supabase.co',
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtja250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA'
+            );
+            debug('Using Supabase CDN global client');
+          } else {
+            // Try ESM variant of the CDN; some setups prefer the +esm entry
+            debug('window.supabase not available; attempting ESM CDN import');
+            try {
+              const esm = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+              if (esm && typeof esm.createClient === 'function') {
+                supabaseClient = esm.createClient(
+                  'https://poekchmrknttynedwpwm.supabase.co',
+                  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtja250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA'
+                );
+                debug('Using ESM CDN client');
+              } else {
+                debug('ESM CDN did not expose createClient');
+                showError('Unable to initialize authentication client after CDN fallback. Check console.');
+              }
+            } catch (e) {
+              debug('ESM CDN import failed: ' + e);
+              showError('Unable to initialize authentication client. Check console for errors.');
+            }
+          }
         } catch (e) {
-          console.error('Failed to load Supabase CDN client', e);
+          debug('Failed to load CDN client: ' + e);
           showError('Unable to initialize authentication client. Check console for details.');
         }
       }
