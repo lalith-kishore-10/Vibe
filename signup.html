@@ -51,40 +51,44 @@
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const supabaseClient = supabase.createClient(
-      "https://poekchmrknttynedwpwm.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"
-    );
+<script>
+  const supabaseClient = supabase.createClient(
+    "https://poekchmrknttynedwpwm.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"
+  );
 
-    document.getElementById("signup-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const fullName = document.getElementById("fullName").value;
-      const email = document.getElementById("email").value;
-      const college = document.getElementById("college").value;
-      const password = document.getElementById("password").value;
+  document.getElementById("signup-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fullName = document.getElementById("fullName").value;
+    const email = document.getElementById("email").value;
+    const college = document.getElementById("college").value;
+    const password = document.getElementById("password").value;
 
-      // Step 1: Create Auth User
-      const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
-        email, password
-      });
-      if (signUpError) return alert("Signup error: " + signUpError.message);
-
-      const user = signUpData.user;
-      if (!user) return alert("Signup failed: no user returned");
-
-      // Step 2: Insert into Profiles
-      const { error: insertError } = await supabaseClient
-        .from("profiles")
-        .insert([{ id: user.id, full_name: fullName, college: college }]);
-
-      if (insertError) {
-        alert("Profile insert failed: " + insertError.message);
-      } else {
-        alert("Signup successful! Please confirm your email before login.");
-        window.location.href = "login.html";
-      }
+    // Step 1: Create Auth User
+    const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+      email, password
     });
-  </script>
+    if (signUpError) return alert("Signup error: " + signUpError.message);
+
+    // Step 2: Get current user (after signUp)
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+      alert("Signup successful! Please confirm your email before login.");
+      return window.location.href = "login.html";
+    }
+
+    // Step 3: Insert into Profiles
+    const { error: insertError } = await supabaseClient
+      .from("profiles")
+      .insert([{ id: user.id, full_name: fullName, college }]);
+
+    if (insertError) {
+      alert("Profile insert failed: " + insertError.message);
+    } else {
+      alert("Signup successful! Please confirm your email before login.");
+      window.location.href = "login.html";
+    }
+  });
+</script>
 </body>
 </html>
