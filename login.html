@@ -84,7 +84,7 @@
             <div class="card card-surface shadow-lg">
               <div class="card-body p-4 p-lg-5 text-white">
                 <h2 class="h3 fw-bold text-center mb-4">Welcome Back</h2>
-                <form>
+                <form id="login-form">
                   <div class="mb-3">
                     <label for="email" class="form-label small">Email address</label>
                     <input type="email" class="form-control" id="email" placeholder="example@gmail.com" required>
@@ -93,8 +93,17 @@
                     <label for="password" class="form-label small">Password</label>
                     <input type="password" class="form-control" id="password" placeholder="••••••••" required>
                   </div>
+                  <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember-me">
+                    <label class="form-check-label small text-muted-2" for="remember-me">Remember me</label>
+                  </div>
+
+                  <div id="login-error" class="mb-3" style="display:none;">
+                    <!-- error messages will be injected here -->
+                  </div>
+
                   <div class="d-grid">
-                    <button type="submit" class="btn vibe-gradient btn-lg">Login</button>
+                    <button type="submit" id="login-button" class="btn vibe-gradient btn-lg">Login</button>
                   </div>
                 </form>
                 <p class="text-center text-muted-2 small mt-4 mb-0">
@@ -132,34 +141,146 @@
     <script>document.addEventListener('DOMContentLoaded', ()=>{ if(typeof lucide!=='undefined') lucide.replace(); });</script>
   </div>
 
-  <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  const supabaseClient = supabase.createClient(
-    "https://poekchmrknttynedwpwm.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"
-  );
+  <!-- Supabase (use local module wrapper) -->
+  <script type="module">
+    // Wrap in an async IIFE so we can await dynamic import or CDN fallback
+    (async () => {
+      const form = document.getElementById('login-form');
+      const errorBox = document.getElementById('login-error');
+      const rememberCheckbox = document.getElementById('remember-me');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const loginButton = document.getElementById('login-button');
 
-  // Handle login form submit
-  document.querySelector("form").addEventListener("submit", async (e) => {
-    e.preventDefault();
+      function showError(message) {
+        errorBox.style.display = 'block';
+        errorBox.className = 'alert alert-danger small';
+        errorBox.textContent = message;
+      }
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+      function clearError() {
+        errorBox.style.display = 'none';
+        errorBox.textContent = '';
+      }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+      // Prefill email if remembered
+      try {
+        const rememberedEmail = localStorage.getItem('vibe_remembered_email');
+        if (rememberedEmail) {
+          emailInput.value = rememberedEmail;
+          rememberCheckbox.checked = true;
+        }
+      } catch (e) {
+        console.warn('Could not read localStorage', e);
+      }
 
-    if (error) {
-      alert("Login failed: " + error.message);
-    } else {
-      alert("Login successful! Welcome " + data.user.email);
-      window.location.href = "profile.html";
-    }
-});
-</script>
+      // Utility to get redirect target from ?next=...
+      function getRedirectTarget() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const next = params.get('next');
+          if (next) return next;
+        } catch (e) {
+          // ignore malformed urls
+        }
+        return null;
+      }
+
+      // Try to import local module first; if that fails (often when opening via file://), fall back to CDN global client
+      let supabaseClient = null;
+      try {
+        const mod = await import('./supabase.js');
+        // `supabase.js` exports `supabase`
+        supabaseClient = mod.supabase;
+        console.info('Using supabase from ./supabase.js');
+      } catch (err) {
+        console.warn('Dynamic import of ./supabase.js failed, falling back to CDN client. Error:', err);
+        try {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js';
+            s.onload = resolve;
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+          // fallback to creating client using same credentials from supabase.js
+          supabaseClient = window.supabase.createClient(
+            'https://poekchmrknttynedwpwm.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA'
+          );
+          console.info('Using Supabase CDN fallback client');
+        } catch (e) {
+          console.error('Failed to load Supabase CDN client', e);
+          showError('Unable to initialize authentication client. Check console for details.');
+        }
+      }
+
+      if (!supabaseClient) {
+        // Nothing to do without a client
+        return;
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearError();
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const remember = rememberCheckbox.checked;
+
+        if (!email || !password) {
+          showError('Please enter both email and password.');
+          return;
+        }
+
+        loginButton.disabled = true;
+        loginButton.textContent = 'Signing in...';
+
+        try {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+          if (error) {
+            console.error('Supabase signIn error:', error);
+            showError(error.message || JSON.stringify(error));
+            loginButton.disabled = false;
+            loginButton.textContent = 'Login';
+            return;
+          }
+
+          if (data && data.user) {
+            console.info('Login successful', data.user);
+
+            try {
+              if (remember) {
+                localStorage.setItem('vibe_remembered_email', email);
+              } else {
+                localStorage.removeItem('vibe_remembered_email');
+              }
+            } catch (e) {
+              console.warn('Could not access localStorage', e);
+            }
+
+            const target = getRedirectTarget();
+            if (target) {
+              window.location.href = target;
+            } else {
+              window.location.href = 'index.html';
+            }
+          } else {
+            console.warn('Login completed but no user present:', data);
+            showError('Login completed but no user information was returned.');
+            loginButton.disabled = false;
+            loginButton.textContent = 'Login';
+          }
+        } catch (err) {
+          console.error('Unexpected error while signing in:', err);
+          showError('An unexpected error occurred. Check console for details.');
+          loginButton.disabled = false;
+          loginButton.textContent = 'Login';
+        }
+      });
+    })();
+  </script>
   
 </body>
 </html>
