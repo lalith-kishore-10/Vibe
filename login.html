@@ -143,175 +143,157 @@
 
   <!-- Supabase (use local module wrapper) -->
   <script type="module">
-    // Wrap in an async IIFE so we can await dynamic import or CDN fallback
-    (async () => {
-      const form = document.getElementById('login-form');
-      const errorBox = document.getElementById('login-error');
-      const rememberCheckbox = document.getElementById('remember-me');
-      const emailInput = document.getElementById('email');
-      const passwordInput = document.getElementById('password');
-      const loginButton = document.getElementById('login-button');
+  (async () => {
+    const form = document.getElementById('login-form');
+    const errorBox = document.getElementById('login-error');
+    const rememberCheckbox = document.getElementById('remember-me');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login-button');
 
-      function showError(message) {
-        errorBox.style.display = 'block';
-        errorBox.className = 'alert alert-danger small';
-        errorBox.textContent = message;
+    function showError(message) {
+      errorBox.style.display = 'block';
+      errorBox.className = 'alert alert-danger small';
+      errorBox.textContent = message;
+    }
+
+    function clearError() {
+      errorBox.style.display = 'none';
+      errorBox.textContent = '';
+    }
+
+    function debug(msg) {
+      console.debug(msg);
+    }
+
+    // Prefill email if remembered
+    try {
+      const rememberedEmail = localStorage.getItem('vibe_remembered_email');
+      if (rememberedEmail) {
+        emailInput.value = rememberedEmail;
+        rememberCheckbox.checked = true;
       }
+    } catch (e) {
+      console.warn('Could not read localStorage', e);
+    }
 
-      function clearError() {
-        errorBox.style.display = 'none';
-        errorBox.textContent = '';
-      }
-
-      // Prefill email if remembered
+    function getRedirectTarget() {
       try {
-        const rememberedEmail = localStorage.getItem('vibe_remembered_email');
-        if (rememberedEmail) {
-          emailInput.value = rememberedEmail;
-          rememberCheckbox.checked = true;
+        const params = new URLSearchParams(window.location.search);
+        const next = params.get('next');
+        if (next) return next;
+      } catch (e) {
+        // ignore malformed urls
+      }
+      return null;
+    }
+
+    // Initialize Supabase client
+    let supabaseClient = null;
+    try {
+      const mod = await import('./supabase.js');
+      supabaseClient = mod.supabase;
+      debug('Using supabase from ./supabase.js');
+    } catch (err) {
+      debug('Import ./supabase.js failed: ' + err);
+      debug('Falling back to CDN client');
+      try {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
+          supabaseClient = window.supabase.createClient(
+            'https://poekchmrknttynedwpwm.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtja250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA'
+          );
+          debug('Using Supabase CDN global client');
+        } else {
+          showError('Unable to initialize authentication client after CDN fallback.');
         }
       } catch (e) {
-        console.warn('Could not read localStorage', e);
+        debug('Failed to load CDN client: ' + e);
+        showError('Unable to initialize authentication client.');
       }
+    }
 
-      // Utility to get redirect target from ?next=...
-      function getRedirectTarget() {
-        try {
-          const params = new URLSearchParams(window.location.search);
-          const next = params.get('next');
-          if (next) return next;
-        } catch (e) {
-          // ignore malformed urls
-        }
-        return null;
+    if (!supabaseClient) return;
+
+    // Check if user is already logged in and redirect if so
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session && session.user) {
+        debug('User already logged in, redirecting...');
+        window.location.href = 'index.html';
+        return;
       }
+    } catch (e) {
+      console.warn('Error checking session:', e);
+    }
 
-      // Try to import local module first; if that fails (often when opening via file://), fall back to CDN global client
-      let supabaseClient = null;
-      const debugEl = document.getElementById('login-debug');
-      function debug(msg) {
-        try { console.debug(msg); } catch(e){}
-        if (!debugEl) return;
-        debugEl.style.display = 'block';
-        debugEl.textContent = (debugEl.textContent ? debugEl.textContent + '\n' : '') + String(msg);
-      }
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
 
-      try {
-        debug('Attempting to import ./supabase.js');
-        const mod = await import('./supabase.js');
-        supabaseClient = mod.supabase;
-        debug('Using supabase from ./supabase.js');
-      } catch (err) {
-        debug('Import ./supabase.js failed: ' + err);
-        debug('Falling back to CDN client');
-        try {
-          await new Promise((resolve, reject) => {
-            const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js';
-            s.onload = resolve;
-            s.onerror = reject;
-            document.head.appendChild(s);
-          });
-          debug('CDN script loaded; checking for window.supabase');
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const remember = rememberCheckbox.checked;
 
-          if (window.supabase && typeof window.supabase.createClient === 'function') {
-            supabaseClient = window.supabase.createClient(
-              'https://poekchmrknttynedwpwm.supabase.co',
-              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtja250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA'
-            );
-            debug('Using Supabase CDN global client');
-          } else {
-            // Try ESM variant of the CDN; some setups prefer the +esm entry
-            debug('window.supabase not available; attempting ESM CDN import');
-            try {
-              const esm = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-              if (esm && typeof esm.createClient === 'function') {
-                supabaseClient = esm.createClient(
-                  'https://poekchmrknttynedwpwm.supabase.co',
-                  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtja250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA'
-                );
-                debug('Using ESM CDN client');
-              } else {
-                debug('ESM CDN did not expose createClient');
-                showError('Unable to initialize authentication client after CDN fallback. Check console.');
-              }
-            } catch (e) {
-              debug('ESM CDN import failed: ' + e);
-              showError('Unable to initialize authentication client. Check console for errors.');
-            }
-          }
-        } catch (e) {
-          debug('Failed to load CDN client: ' + e);
-          showError('Unable to initialize authentication client. Check console for details.');
-        }
-      }
-
-      if (!supabaseClient) {
-        // Nothing to do without a client
+      if (!email || !password) {
+        showError('Please enter both email and password.');
         return;
       }
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        clearError();
+      loginButton.disabled = true;
+      loginButton.textContent = 'Signing in...';
 
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-        const remember = rememberCheckbox.checked;
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-        if (!email || !password) {
-          showError('Please enter both email and password.');
+        if (error) {
+          console.error('Supabase signIn error:', error);
+          showError(error.message || JSON.stringify(error));
+          loginButton.disabled = false;
+          loginButton.textContent = 'Login';
           return;
         }
 
-        loginButton.disabled = true;
-        loginButton.textContent = 'Signing in...';
+        if (data && data.user) {
+          console.info('Login successful', data.user);
 
-        try {
-          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-          if (error) {
-            console.error('Supabase signIn error:', error);
-            showError(error.message || JSON.stringify(error));
-            loginButton.disabled = false;
-            loginButton.textContent = 'Login';
-            return;
-          }
-
-          if (data && data.user) {
-            console.info('Login successful', data.user);
-
-            try {
-              if (remember) {
-                localStorage.setItem('vibe_remembered_email', email);
-              } else {
-                localStorage.removeItem('vibe_remembered_email');
-              }
-            } catch (e) {
-              console.warn('Could not access localStorage', e);
-            }
-
-            const target = getRedirectTarget();
-            if (target) {
-              window.location.href = target;
+          try {
+            if (remember) {
+              localStorage.setItem('vibe_remembered_email', email);
             } else {
-              window.location.href = 'index.html';
+              localStorage.removeItem('vibe_remembered_email');
             }
-          } else {
-            console.warn('Login completed but no user present:', data);
-            showError('Login completed but no user information was returned.');
-            loginButton.disabled = false;
-            loginButton.textContent = 'Login';
+          } catch (e) {
+            console.warn('Could not access localStorage', e);
           }
-        } catch (err) {
-          console.error('Unexpected error while signing in:', err);
-          showError('An unexpected error occurred. Check console for details.');
+
+          const target = getRedirectTarget();
+          if (target) {
+            window.location.href = target;
+          } else {
+            window.location.href = 'index.html';
+          }
+        } else {
+          showError('Login completed but no user information was returned.');
           loginButton.disabled = false;
           loginButton.textContent = 'Login';
         }
-      });
-    })();
-  </script>
+      } catch (err) {
+        console.error('Unexpected error while signing in:', err);
+        showError('An unexpected error occurred. Check console for details.');
+        loginButton.disabled = false;
+        loginButton.textContent = 'Login';
+      }
+    });
+  })();
+</script>
   
 </body>
 </html>
