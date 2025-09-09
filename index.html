@@ -99,7 +99,6 @@
   </style>
 </head>
 <body>
-
   <div class="min-vh-100 d-flex flex-column">
     <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
       <div class="container px-4 px-sm-3 px-lg-4">
@@ -132,7 +131,7 @@
       </div>
     </header>
 
-  <main id="main-content" class="flex-grow-1">
+    <main class="flex-grow-1">
       <section class="position-relative overflow-hidden">
         <div class="position-absolute top-0 start-0 w-100 h-100 pointer-events-none" aria-hidden="true">
           <div class="position-absolute rounded-circle decor-blob-1"></div>
@@ -257,36 +256,7 @@ console.log(greet('friend'));</code></pre>
     </footer>
   </div>
 
-
-  <script src="supabase.js"></script>
-  <script>
-  // Shared authentication logic for all pages
-  document.addEventListener('DOMContentLoaded', function() {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      const userInfo = document.getElementById('user-info');
-      const loginLink = document.getElementById('login-link');
-      const signupLink = document.getElementById('signup-link');
-      const logoutLink = document.getElementById('logout-link');
-      if (session && session.user) {
-        userInfo.textContent = `Welcome, ${session.user.email}`;
-        loginLink.style.display = 'none';
-        signupLink.style.display = 'none';
-        logoutLink.style.display = 'inline';
-      } else {
-        userInfo.textContent = '';
-        loginLink.style.display = 'inline';
-        signupLink.style.display = 'inline';
-        logoutLink.style.display = 'none';
-      }
-    });
-    document.getElementById('logout-link').addEventListener('click', function(e) {
-      e.preventDefault();
-      supabase.auth.signOut().then(() => {
-        window.location.href = 'index.html';
-      });
-    });
-  });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
   <script>
     // Ensure Lucide icons render after DOM ready

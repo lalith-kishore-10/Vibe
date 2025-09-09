@@ -49,36 +49,36 @@
   </style>
 </head>
 <body>
-
-  <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
-    <div class="container px-4 px-sm-3 px-lg-4">
-      <nav class="navbar navbar-expand-md navbar-dark">
-        <div class="container-fluid">
-          <a href="index.html" class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none">
-            <span class="fs-3 fw-bold">Vibe<span class="text-primary">.io</span></span>
-            <span class="ms-2 text-muted-2 small d-none d-sm-inline">Student Dev Community</span>
-          </a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <i data-lucide="menu"></i>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mx-auto">
-              <li class="nav-item"><a href="discussion.html" class="nav-link active">Discussions</a></li>
-              <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
-              <li class="nav-item"><a href="events.html" class="nav-link">Events</a></li>
-              <li class="nav-item"><a href="apply-ambassador.html" class="nav-link">Ambassadors</a></li>
-              <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-            </ul>
-            <div class="ms-auto d-flex gap-3">
-              <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
-              <a href="signup.html" class="btn vibe-gradient">Join for Free</a>
+  <div class="min-vh-100 d-flex flex-column">
+    <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
+      <div class="container px-4 px-sm-3 px-lg-4">
+        <nav class="navbar navbar-expand-md navbar-dark">
+          <div class="container-fluid">
+            <a href="index.html" class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none">
+              <span class="fs-3 fw-bold">Vibe<span class="text-primary">.io</span></span>
+              <span class="ms-2 text-muted-2 small d-none d-sm-inline">Student Dev Community</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <i data-lucide="menu"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a href="discussion.html" class="nav-link active">Discussions</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="events.html" class="nav-link">Events</a></li>
+                <li class="nav-item"><a href="apply-ambassador.html" class="nav-link">Ambassadors</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+              </ul>
+              <div class="ms-auto d-flex gap-3">
+                <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
+                <a href="signup.html" class="btn vibe-gradient">Join for Free</a>
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
-    </div>
-  </header>
-  <main id="main-content" class="flex-grow-1">
+        </nav>
+      </div>
+    </header>
+    <main class="flex-grow-1">
       <section id="discussions" class="container py-5">
         <h3 class="h4 fw-semibold">Discussions</h3>
         <p class="text-muted-2 mb-0">A lively place for threads, help, and knowledge sharing. (Coming soon)</p>
@@ -105,34 +105,20 @@
       </div>
     </footer>
   </div>
-  <script src="supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-  // Shared authentication logic for all pages
-  document.addEventListener('DOMContentLoaded', function() {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      const userInfo = document.getElementById('user-info');
-      const loginLink = document.getElementById('login-link');
-      const signupLink = document.getElementById('signup-link');
-      const logoutLink = document.getElementById('logout-link');
-      if (session && session.user) {
-        userInfo.textContent = `Welcome, ${session.user.email}`;
-        loginLink.style.display = 'none';
-        signupLink.style.display = 'none';
-        logoutLink.style.display = 'inline';
-      } else {
-        userInfo.textContent = '';
-        loginLink.style.display = 'inline';
-        signupLink.style.display = 'inline';
-        logoutLink.style.display = 'none';
-      }
-    });
-    document.getElementById('logout-link').addEventListener('click', function(e) {
-      e.preventDefault();
-      supabase.auth.signOut().then(() => {
-        window.location.href = 'index.html';
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof lucide !== 'undefined') lucide.replace();
+      // Supabase auth check
+      const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA';
+      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      supabase.auth.getUser().then(({ data }) => {
+        if (!data.user) {
+          window.location.href = 'signup.html';
+        }
       });
     });
-  });
   </script>
 </body>
 </html>
