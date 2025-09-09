@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe - Base</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Add any shared CSS or meta tags here -->
+</head>
+<body>
+    <header id="main-header">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="projects.html">Projects</a>
+            <a href="events.html">Events</a>
+            <a href="discussion.html">Discussion</a>
+            <a href="guidelines.html">Guidelines</a>
+            <a href="contact.html">Contact</a>
+            <a href="about.html">About</a>
+            <span id="user-info"></span>
+            <a href="login.html" id="login-link">Login</a>
+            <a href="signup.html" id="signup-link">Sign Up</a>
+            <a href="#" id="logout-link" style="display:none;">Logout</a>
+        </nav>
+    </header>
+    <main id="main-content">
+        <!-- Page-specific content will be loaded here -->
+    </main>
+    <script src="supabase.js"></script>
+    <script>
+    // Shared authentication logic for all pages
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check user session using Supabase
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            const userInfo = document.getElementById('user-info');
+            const loginLink = document.getElementById('login-link');
+            const signupLink = document.getElementById('signup-link');
+            const logoutLink = document.getElementById('logout-link');
+            if (session && session.user) {
+                userInfo.textContent = `Welcome, ${session.user.email}`;
+                loginLink.style.display = 'none';
+                signupLink.style.display = 'none';
+                logoutLink.style.display = 'inline';
+            } else {
+                userInfo.textContent = '';
+                loginLink.style.display = 'inline';
+                signupLink.style.display = 'inline';
+                logoutLink.style.display = 'none';
+            }
+        });
+        // Logout handler
+        document.getElementById('logout-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            supabase.auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+    });
+    </script>
+</body>
+</html>
