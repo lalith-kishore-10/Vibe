@@ -135,19 +135,22 @@
   <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
-  const supabaseClient = supabase.createClient(
+  // Initialize Supabase client
+  const supabaseClient = window.supabase.createClient(
     "https://poekchmrknttynedwpwm.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"
   );
 
+  // Handle login form submit
   document.querySelector("form").addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email,
-      password
+      password,
     });
 
     if (error) {
@@ -156,7 +159,7 @@
       alert("Login successful! Welcome " + data.user.email);
       window.location.href = "index.html";
     }
-  });
+  });
 </script>
   
 </body>
