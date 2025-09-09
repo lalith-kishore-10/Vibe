@@ -44,20 +44,33 @@
   </style>
 </head> 
 <body>
-  <header id="main-header">
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="projects.html">Projects</a>
-      <a href="events.html">Events</a>
-      <a href="discussion.html">Discussion</a>
-      <a href="guidelines.html">Guidelines</a>
-      <a href="contact.html">Contact</a>
-      <a href="about.html">About</a>
-      <span id="user-info"></span>
-      <a href="login.html" id="login-link">Login</a>
-      <a href="signup.html" id="signup-link">Sign Up</a>
-      <a href="#" id="logout-link" style="display:none;">Logout</a>
-    </nav>
+  <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
+    <div class="container px-4 px-sm-3 px-lg-4">
+      <nav class="navbar navbar-expand-md navbar-dark">
+        <div class="container-fluid">
+          <a href="index.html" class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none">
+            <span class="fs-3 fw-bold">Vibe<span class="text-primary">.io</span></span>
+            <span class="ms-2 text-muted-2 small d-none d-sm-inline">Student Dev Community</span>
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item"><a href="discussion.html" class="nav-link">Discussions</a></li>
+              <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+              <li class="nav-item"><a href="events.html" class="nav-link">Events</a></li>
+              <li class="nav-item"><a href="apply-ambassador.html" class="nav-link">Ambassadors</a></li>
+              <li class="nav-item"><a href="contact.html" class="nav-link active">Contact</a></li>
+            </ul>
+            <div class="ms-auto d-flex gap-3">
+              <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
+              <a href="signup.html" class="btn vibe-gradient">Join for Free</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
   </header>
 
     <!-- Contact Content -->
