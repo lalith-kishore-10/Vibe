@@ -115,15 +115,14 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a href="discussion.html" class="nav-link">Discussions</a></li>
-                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
                 <li class="nav-item"><a href="events.html" class="nav-link">Events</a></li>
                 <li class="nav-item"><a href="apply-ambassador.html" class="nav-link">Ambassadors</a></li>
                 <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
               </ul>
-              <div class="ms-auto d-flex gap-3">
-                <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
-                <a href="signup.html" class="btn vibe-gradient">Join for Free</a>
+              <div class="ms-auto d-flex gap-3" id="nav-auth-area">
+                <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center" id="nav-login">Login</a>
+                <a href="signup.html" class="btn vibe-gradient" id="nav-signup">Join for Free</a>
+                <!-- Logged-in state will be injected here -->
               </div>
             </div>
           </div>
@@ -147,7 +146,6 @@
 
               <div class="mt-4 d-flex flex-wrap gap-3">
                 <a href="signup.html" id="cta-join" class="btn vibe-gradient btn-lg">Join the Vibe</a>
-                <a href="#projects" class="btn btn-outline-light">Explore Projects</a>
               </div>
 
               <div class="mt-4 small">
@@ -238,7 +236,7 @@ console.log(greet('friend'));</code></pre>
       <div class="container py-4">
         <div class="row align-items-center">
           <div class="col-md-6 d-flex align-items-center gap-3">
-            <div class="text-white fw-bold"><a href="index.html">Vibe.io</a></div>
+            <div class="text-white fw-bold"><a href="index.html" style="text-decoration: none;">Vibe.io</a></div>
             <nav class="d-flex gap-3">
               <a href="about.html" class="small text-decoration-none">About</a>
               <a href="guidelines.html" class="small text-decoration-none">Guidelines</a>
@@ -263,6 +261,71 @@ console.log(greet('friend'));</code></pre>
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof lucide !== 'undefined') lucide.replace();
     });
+
+    // Show login state in navbar (reads localStorage flag set by login page)
+    (function updateNavAuth() {
+      try {
+        const nav = document.getElementById('nav-auth-area');
+        if (!nav) return;
+        const authRaw = localStorage.getItem('vibe_logged_in');
+        if (!authRaw) return; // nothing to do
+        const auth = JSON.parse(authRaw);
+
+        // Remove login/signup elements from the DOM (not just hide) so they don't appear anywhere
+        const loginBtn = document.getElementById('nav-login');
+        const signupBtn = document.getElementById('nav-signup');
+        if (loginBtn && loginBtn.parentNode) loginBtn.parentNode.removeChild(loginBtn);
+        if (signupBtn && signupBtn.parentNode) signupBtn.parentNode.removeChild(signupBtn);
+
+        // Also remove any other anchors that link to login.html to cover other nav placements
+        document.querySelectorAll('a[href$="/login.html"], a[href="login.html"]').forEach(a => {
+          if (a && a.parentNode) a.parentNode.removeChild(a);
+        });
+
+        // Create a simple profile icon, email badge, and logout button
+        const wrapper = document.createElement('div');
+        wrapper.className = 'd-flex align-items-center gap-2';
+
+        // Profile link with circular avatar (first initial)
+        const profileLink = document.createElement('a');
+        profileLink.href = 'profile.html';
+        profileLink.title = 'Profile';
+        profileLink.className = 'd-flex align-items-center text-decoration-none';
+        const avatar = document.createElement('div');
+        avatar.className = 'rounded-circle bg-white text-dark d-flex align-items-center justify-content-center';
+        avatar.style.width = '34px';
+        avatar.style.height = '34px';
+        avatar.style.fontWeight = '600';
+        avatar.style.fontSize = '0.9rem';
+        avatar.textContent = (auth.email || 'U').charAt(0).toUpperCase();
+        profileLink.appendChild(avatar);
+
+        const badge = document.createElement('div');
+        badge.className = 'small text-muted-2 d-none d-sm-block';
+        badge.textContent = auth.email || 'You';
+
+        const logout = document.createElement('button');
+        logout.className = 'btn btn-outline-light btn-sm';
+        logout.textContent = 'Logout';
+        logout.addEventListener('click', () => {
+          localStorage.removeItem('vibe_logged_in');
+          try {
+            if (window.supabase && typeof supabase.createClient === 'function') {
+              const client = supabase.createClient('https://poekchmrknttynedwpwm.supabase.co','public');
+              if (client?.auth?.signOut) client.auth.signOut().catch(()=>{});
+            }
+          } catch(e){}
+          window.location.reload();
+        });
+
+        wrapper.appendChild(profileLink);
+        wrapper.appendChild(badge);
+        wrapper.appendChild(logout);
+        nav.appendChild(wrapper);
+      } catch (err) {
+        console.error('Auth nav update failed', err);
+      }
+    })();
 
     // Smooth scrolling with header offset (for in-page links)
     function offsetScrollTo(hash) {

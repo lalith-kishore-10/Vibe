@@ -23,6 +23,7 @@
       --header-height: 72px;
     }
     html { scroll-behavior: smooth; }
+  
     body {
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
       background: linear-gradient(135deg, var(--vibe-bg-start), var(--vibe-bg-end));
@@ -77,9 +78,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a href="discussion.html" class="nav-link">Discussions</a></li>
-                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
-                <li class="nav-item"><a href="events.html" class="nav-link active">Events</a></li>
+                <li class="nav-item" ><a href="events.html" class="nav-link active">Events</a></li>
                 <li class="nav-item"><a href="apply-ambassador.html" class="nav-link">Ambassadors</a></li>
                 <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
               </ul>
@@ -132,7 +131,7 @@
       <div class="container py-4">
         <div class="row align-items-center">
           <div class="col-md-6 d-flex align-items-center gap-3">
-            <div class="text-white fw-bold"><a href="index.html">Vibe.io</a></div>
+            <div class="text-white fw-bold"><a href="index.html" style="text-decoration: none;">Vibe.io</a></div>
             <nav class="d-flex gap-3">
               <a href="about.html" class="small text-decoration-none">About</a>
               <a href="guidelines.html" class="small text-decoration-none">Guidelines</a>
@@ -153,16 +152,21 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof lucide !== 'undefined') lucide.replace();
-      // Supabase auth check
+      // Supabase auth check (if desired) - keep as-is
       const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA';
-      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      supabase.auth.getUser().then(({ data }) => {
-        if (!data.user) {
-          window.location.href = 'signup.html';
-        }
-      });
+        try {
+          if (window.supabase && typeof supabase.createClient === 'function') {
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            supabaseClient.auth.getUser().then(({ data }) => {
+              if (!data.user) {
+                // keep page public; optional redirect removed
+              }
+            }).catch(()=>{});
+          }
+        } catch(e){}
     });
   </script>
+  <script src="assets/js/auth-nav.js"></script>
 </body>
 </html>

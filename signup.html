@@ -70,21 +70,40 @@
       });
       if (signUpError) return alert("Signup error: " + signUpError.message);
 
-      const user = signUpData.user;
-      if (!user) return alert("Signup failed: no user returned");
+      const userFromSignUp = signUpData.user;
+      if (!userFromSignUp) return alert("Signup failed: no user returned");
 
-      // Step 2: Insert into Profiles
-      const { error: insertError } = await supabaseClient
-        .from("profiles")
-        .insert([{ id: user.id, full_name: fullName, college: college }]);
+      // Try to sign the user in immediately so we have an auth session for RLS-protected inserts.
+      const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-      if (insertError) {
-        alert("Profile insert failed: " + insertError.message);
-      } else {
-        alert("Signup successful! Please confirm your email before login.");
+      if (signInError) {
+        // Common case: user must confirm email before sign-in. Defer profile creation until first successful login.
+        localStorage.setItem('pendingProfile', JSON.stringify({ email, fullName, college }));
+        alert("Signup successful! Please confirm your email before login. Your profile will be created when you first sign in.");
         window.location.href = "login.html";
+        return;
+      }
+
+      const user = signInData.user ?? userFromSignUp;
+      if (!user) return alert("Signup flow error: no user available after sign-in");
+
+      // Upsert profile while authenticated so RLS policies that require auth.uid() = id will pass.
+      const { error: upsertError } = await supabaseClient
+        .from("profiles")
+        .upsert([{ id: user.id, full_name: fullName, college: college }]);
+
+      if (upsertError) {
+        // If upsert failed for some reason, persist pending data and proceed to login page.
+        localStorage.setItem('pendingProfile', JSON.stringify({ email, fullName, college }));
+        alert("Signup created but profile upsert failed: " + upsertError.message + ". We'll complete the profile when you next login.");
+        window.location.href = "login.html";
+      } else {
+        localStorage.removeItem('pendingProfile');
+        alert("Signup successful! You are signed in and your profile was created.");
+        window.location.href = "profile.html";
       }
     });
   </script>
+  <script src="assets/js/auth-nav.js"></script>
 </body>
 </html>

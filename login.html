@@ -61,12 +61,6 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a href="index.html#discussions" class="nav-link">Discussions</a></li>
-                <li class="nav-item"><a href="index.html#projects" class="nav-link">Projects</a></li>
-                <li class="nav-item"><a href="index.html#events" class="nav-link">Events</a></li>
-                <li class="nav-item"><a href="index.html#ambassadors" class="nav-link">Ambassadors</a></li>
-              </ul>
               <div class="ms-auto d-flex gap-3">
                 <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
                 <a href="signup.html" class="btn vibe-gradient">Join for Free</a>
@@ -133,31 +127,87 @@
   </div>
 
   <!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  const supabase = supabase.createClient(
-    "https://poekchmrknttynedwpwm.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"
-  );
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="assets/js/auth-nav.js"></script>
+  <script>
+    (function () {
+      const supabaseClient = (typeof supabase !== 'undefined' && typeof supabase.createClient === 'function')
+        ? supabase.createClient('https://poekchmrknttynedwpwm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA')
+        : null;
 
-  document.querySelector("form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+      const form = document.querySelector('form');
+      if (!form) return;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
 
-    if (error) {
-      alert("Login failed: " + error.message);
-    } else {
-      alert("Login successful! Welcome " + data.user.email);
-      window.location.href = "profile.html";
-    }
-  });
-</script>
+        try {
+          if (supabaseClient) {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+              const status = error?.status || error?.statusCode || null;
+              console.error('Supabase signIn error object:', error);
+              if (status === 401) {
+                alert('Login failed: Unauthorized (401). Possible causes: wrong credentials, email sign-in not enabled, or invalid anon/public key. Check Supabase auth settings and your project URL/anon key.');
+                try {
+                  const tokenUrl = 'https://poekchmrknttynedwpwm.supabase.co/auth/v1/token?grant_type=password';
+                  fetch(tokenUrl, { method: 'POST' })
+                    .then(async (res) => {
+                      const text = await res.text();
+                      console.warn('Diagnostic token endpoint fetch status', res.status, text);
+                    })
+                    .catch((fetchErr) => console.warn('Diagnostic fetch to token endpoint failed', fetchErr));
+                } catch (diagErr) {
+                  console.warn('Diagnostic attempt failed', diagErr);
+                }
+
+                return;
+              }
+
+              alert('Login failed: ' + (error.message || JSON.stringify(error)));
+              return;
+            }
+
+            const user = data?.user ?? data?.session?.user ?? null;
+            const userEmail = user?.email ?? email;
+            localStorage.setItem('vibe_logged_in', JSON.stringify({ email: userEmail, provider: 'supabase' }));
+
+            try {
+              const pending = localStorage.getItem('pendingProfile');
+              if (pending) {
+                const parsed = JSON.parse(pending);
+                const userId = user?.id ?? data?.session?.user?.id;
+                if (userId) {
+                  const { error: upsertError } = await supabaseClient.from('profiles').upsert([{ id: userId, full_name: parsed.fullName, college: parsed.college }]);
+                  if (!upsertError) localStorage.removeItem('pendingProfile');
+                }
+              }
+            } catch (err) {
+              console.error('Pending profile upsert error', err);
+            }
+
+            alert('Login successful! Welcome ' + userEmail);
+            window.location.href = 'index.html';
+            return;
+          }
+
+          if (!email || !password) {
+            alert('Please enter both email and password.');
+            return;
+          }
+
+          localStorage.setItem('vibe_logged_in', JSON.stringify({ email, provider: 'local' }));
+          alert('Login successful! Redirecting to home.');
+          window.location.href = 'index.html';
+        } catch (err) {
+          console.error(err);
+          alert('Login failed: ' + (err?.message || err));
+        }
+      });
+    })();
+  </script>
   
 </body>
 </html>
