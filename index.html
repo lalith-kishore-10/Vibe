@@ -297,12 +297,13 @@ console.log(greet('friend'));</code></pre>
         avatar.style.height = '34px';
         avatar.style.fontWeight = '600';
         avatar.style.fontSize = '0.9rem';
-        avatar.textContent = (auth.email || 'U').charAt(0).toUpperCase();
+  const displayName = auth.name || auth.fullName || (auth.email ? auth.email.split('@')[0] : 'User');
+  avatar.textContent = (displayName || 'U').charAt(0).toUpperCase();
         profileLink.appendChild(avatar);
 
         const badge = document.createElement('div');
         badge.className = 'small text-muted-2 d-none d-sm-block';
-        badge.textContent = auth.email || 'You';
+  badge.textContent = displayName || auth.email || 'You';
 
         const logout = document.createElement('button');
         logout.className = 'btn btn-outline-light btn-sm';

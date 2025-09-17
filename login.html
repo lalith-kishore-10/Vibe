@@ -172,7 +172,31 @@
 
             const user = data?.user ?? data?.session?.user ?? null;
             const userEmail = user?.email ?? email;
-            localStorage.setItem('vibe_logged_in', JSON.stringify({ email: userEmail, provider: 'supabase' }));
+            // Attempt to fetch profile to get full name and joined date when supabase is available
+            let name = null;
+            try {
+              if (supabaseClient && user?.id) {
+                const { data: profileData, error: profileErr } = await supabaseClient.from('profiles').select('full_name, created_at').eq('id', user.id).limit(1).single();
+                if (!profileErr && profileData) {
+                  name = profileData.full_name || null;
+                }
+              }
+            } catch (e) {
+              console.warn('Could not load profile for display name', e);
+            }
+
+            const stored = { email: userEmail, provider: 'supabase', role: 'Member' };
+            if (name) stored.name = name;
+            // If no profile name, try pendingProfile
+            try {
+              const pending = localStorage.getItem('pendingProfile');
+              if (!name && pending) {
+                const parsed = JSON.parse(pending);
+                if (parsed.fullName) stored.name = parsed.fullName;
+              }
+            } catch (e) {}
+
+            localStorage.setItem('vibe_logged_in', JSON.stringify(stored));
 
             try {
               const pending = localStorage.getItem('pendingProfile');
@@ -188,7 +212,7 @@
               console.error('Pending profile upsert error', err);
             }
 
-            alert('Login successful! Welcome ' + userEmail);
+            alert('Login successful! Welcome ' + (stored.name || userEmail));
             window.location.href = 'index.html';
             return;
           }

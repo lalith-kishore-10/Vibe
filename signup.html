@@ -99,6 +99,10 @@
         window.location.href = "login.html";
       } else {
         localStorage.removeItem('pendingProfile');
+        // Save a lightweight local signed-in marker with name and joined date
+        try {
+          localStorage.setItem('vibe_logged_in', JSON.stringify({ email: email, provider: 'supabase', name: fullName, role: 'Member' }));
+        } catch (e) {}
         alert("Signup successful! You are signed in and your profile was created.");
         window.location.href = "profile.html";
       }

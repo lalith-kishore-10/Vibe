@@ -36,12 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
     profileIcon.style.width = '34px';
     profileIcon.style.height = '34px';
     profileIcon.style.fontSize = '0.9rem';
-    profileIcon.textContent = (auth.email && auth.email[0]) ? auth.email[0].toUpperCase() : 'U';
+  const displayName = auth.name || auth.fullName || (auth.email ? auth.email.split('@')[0] : 'User');
+  profileIcon.textContent = (displayName && displayName[0]) ? displayName[0].toUpperCase() : 'U';
     profileLink.appendChild(profileIcon);
 
     const badge = document.createElement('div');
     badge.className = 'small text-muted-2';
-    badge.textContent = auth.email || 'You';
+  badge.textContent = displayName || auth.email || 'You';
 
     const logout = document.createElement('button');
     logout.className = 'btn btn-outline-light btn-sm';
