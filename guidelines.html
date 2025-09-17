@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Guidelines — Vibe.io</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <style>
+    :root {
+      --vibe-primary: #7c3aed; --vibe-primary-hover: #6d28d9; --vibe-accent: #0ea5e9; --vibe-bg-start: #0f172a; --vibe-bg-end: #1e1b4b; --vibe-surface: rgba(30, 41, 59, 0.6); --vibe-border: rgba(148, 163, 184, 0.25); --vibe-text: #e2e8f0; --vibe-muted: #94a3b8;
+    }
+     /* Utility/theme helpers */
+    .text-muted-2 { color: var(--vibe-muted) !important; }
+    .bg-dark-transparent { background-color: rgba(0, 0, 0, 0.55); backdrop-filter: saturate(120%) blur(6px); }
+    .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; }
+    .border-subtle { border-color: var(--vibe-border) !important; }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--vibe-bg-start), var(--vibe-bg-end)) fixed; color: var(--vibe-text); }
+    .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; backdrop-filter: saturate(120%) blur(6px); }
+    .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
+    .text-muted-2 { color: var(--vibe-muted) !important; }
+    h2 { margin-top: 2.5rem; border-bottom: 1px solid var(--vibe-border); padding-bottom: 0.5rem; }
+    h3 { margin-top: 1.5rem; color: var(--vibe-accent); }
+    ul { list-style-type: '• '; padding-left: 1.2rem; }
+    /* Buttons */
+    .btn.vibe-primary { background-color: var(--vibe-primary); color: #fff; border: none; }
+    .btn.vibe-primary:hover { background-color: var(--vibe-primary-hover); color: #fff; }
+    .btn.vibe-gradient {
+      background-image: linear-gradient(to right, var(--vibe-primary), var(--vibe-accent));
+      color: #fff; border: none;
+    }
+    .btn.vibe-gradient:hover { filter: brightness(1.08); }
+    .btn-outline-light { border-color: rgba(226,232,240,0.6); color: #fff; }
+    .btn-outline-light:hover { background-color: #fff !important; color: #1e1b4b !important; }
+    /* Navbar */ 
+    .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
+    .navbar-dark .nav-link:hover { opacity: 1; }
+    .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
+    /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
+  .navbar-toggler, .navbar-toggler:focus { color: var(--vibe-text); border: none; }
+  .navbar-toggler i, .navbar-toggler svg { color: var(--vibe-text); width: 1.25rem; height: 1.25rem; stroke-width: 1.5; }
+    /* Footer */
+    footer a { color: var(--vibe-text); opacity: 0.9; }
+    footer a:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="min-vh-100 d-flex flex-column">
+    <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
+      <div class="container px-4 px-sm-3 px-lg-4">
+        <nav class="navbar navbar-expand-md navbar-dark">
+          <div class="container-fluid">
+            <a href="index.html" class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none">
+              <span class="fs-3 fw-bold">Vibe<span class="text-primary">.io</span></span>
+              <span class="ms-2 text-muted-2 small d-none d-sm-inline">Student Dev Community</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <i data-lucide="menu"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav mx-auto">
+                  <li class="nav-item"><a href="discussion.html" class="nav-link">Discussions</a></li>
+                  <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                  <li class="nav-item"><a href="events.html" class="nav-link">Events</a></li>
+                  <li class="nav-item"><a href="apply-ambassador.html" class="nav-link">Ambassadors</a></li>
+                  <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+              </ul>
+              <div class="ms-auto d-flex gap-3">
+                <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
+                <a href="signup.html" class="btn vibe-gradient">Join for Free</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-grow-1 py-5">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card card-surface shadow-lg">
+                <div class="card-body p-4 p-md-5">
+                    <h1 class="display-6 fw-bold text-center text-white">Vibe.io Community Guidelines</h1>
+                    <p class="text-center text-muted-2 mb-5">Building a supportive space for Tamil Nadu's student developers.</p>
+
+                    <h2 class="h4 fw-bold text-white">Our Philosophy</h2>
+                    <p class="text-muted-2">
+                        Welcome to Vibe.io! Our mission is to create the most supportive, collaborative, and innovative community for student developers in Tamil Nadu. This is a place to learn, share, and grow together. To ensure our community remains a safe and productive space for everyone, we ask that you read and follow these guidelines. Our goal isn't to restrict you, but to empower everyone to have the best possible experience.
+                    </p>
+
+                    <h2 class="h4 fw-bold text-white">Section 1: The Core Rules - Keep Our Community Healthy</h2>
+                    <p class="text-muted-2">These rules are essential for maintaining a respectful and safe environment. Violating these rules will result in moderation action.</p>
+                    
+                    <h3 class="h5 fw-semibold text-muted-2">Be Respectful and Collaborative.</h3>
+                    <ul class="text-muted-2">
+                        <li>Treat every member with respect. Harassment, bullying, personal insults, or any form of intimidation will not be tolerated.</li>
+                        <li>Healthy debate is welcome, but personal attacks are not. Criticize ideas, not people.</li>
+                        <li>Remember that we have members from various backgrounds and skill levels. Be patient with beginners and humble as an expert.</li>
+                    </ul>
+
+                    <h3 class="h5 fw-semibold text-muted-2">No Hate Speech or Discrimination.</h3>
+                    <ul>
+                        <li class="text-muted-2">Vibe.io has a <b class="text-white">zero-tolerance policy</b> for any content that attacks or demeans an individual or group based on race, ethnicity, religion, gender, sexual orientation, disability, or any other personal attribute.</li>
+                    </ul>
+                    
+                    <h3 class="h5 fw-semibold text-muted-2">Keep it Safe for Everyone (Zero Tolerance).</h3>
+                    <ul class="text-muted-2">
+                        <li>Do not share or post any content that is graphically violent, sexually explicit, or promotes self-harm.</li>
+                        <li>Do not make threats of violence or harm against anyone. Any credible threat will result in an immediate ban and may be reported to the relevant authorities.</li>
+                    </ul>
+
+                    <h3 class="h5 fw-semibold text-muted-2">Respect Privacy.</h3>
+                    <ul class="text-muted-2">
+                        <li>Do not share anyone's private, personal information without their explicit consent (this is often called "doxxing"). This includes addresses, phone numbers, private photos, or any other identifying data.</li>
+                    </ul>
+
+                    <h2 class="h4 fw-bold text-white">Section 2: The Platform Rules - Keep Our Community Focused</h2>
+                    <p class="text-muted-2">These rules help ensure that conversations are productive, on-topic, and valuable for everyone.</p>
+
+                    <h3 class="h5 fw-semibold text-muted-2">Stay On-Topic.</h3>
+                    <ul class="text-muted-2">
+                        <li>Please post your questions and discussions in the appropriate channels or forums (e.g., post Python questions in the #python channel). This keeps the community organized and makes it easier for others to find information.</li>
+                    </ul>
+
+                    <h3 class="h5 fw-semibold text-muted-2">No Spam or Excessive Self-Promotion.</h3>
+                    <ul class="text-muted-2">
+                        <li>Spamming includes posting the same message repeatedly, sending unsolicited DMs, or posting irrelevant links.</li>
+                        <li>It's okay to share your projects and achievements! However, please do so in the designated #project-showcase channels. Do not excessively promote your personal social media, paid products, or services in general discussion channels.</li>
+                    </ul>
+
+                    <h3 class="h5 fw-semibold text-muted-2">Share Knowledge Responsibly.</h3>
+                    <ul class="text-muted-2">
+                        <li>Do not encourage or facilitate cheating or academic dishonesty. It's okay to help someone with a concept or debug a piece of code, but do not provide complete solutions to graded college assignments. The goal is to learn, not to cheat.</li>
+                        <li>Do not share harmful misinformation. Do not post content that is demonstrably false and could cause harm (e.g., promoting malware, phishing scams, or dangerous coding practices).</li>
+                    </ul>
+
+                    <h3 class="h5 fw-semibold text-muted-2">Respect Intellectual Property.</h3>
+                    <ul class="text-muted-2">
+                        <li>Only share content that you have the right to share. Do not post links to pirated software, books, or courses. Give credit where it's due when sharing code or resources from others.</li>
+                    </ul>
+
+                    <h2 class="h4 fw-bold text-white">Section 3: How We Enforce These Rules</h2>
+                    <p class="text-muted-2">Our moderation team, which includes our Student Ambassadors, is here to ensure these guidelines are followed. If you see someone breaking the rules, please report it.</p>
+
+                    <h3 class="h5 fw-semibold text-muted-2">Reporting</h3>
+                    <ul class="text-muted-2">
+                        <li>Use the "Report" feature on the platform or contact a moderator or ambassador directly. Provide as much detail as possible.</li>
+                    </ul>
+                    <h3 class="h5 fw-semibold text-muted-2">Our Process</h3>
+                    <ul class="text-muted-2">
+                        <li><b class="text-white">Warning:</b> For minor infractions, you will receive a friendly warning from a moderator.</li>
+                        <li><b class="text-white">Temporary Mute/Suspension:</b> For repeated minor offenses or more serious violations, your account may be temporarily muted or suspended.</li>
+                        <li><b class="text-white">Permanent Ban:</b> For severe violations like hate speech, threats, or spamming, your account will be permanently removed from Vibe.io.</li>
+                    </ul>
+                    <p class="text-muted-2 mt-3">We believe in being fair and transparent. Our primary goal is to educate and maintain a healthy community, not to punish.</p>
+
+                    <hr class="border-subtle my-4">
+                    <p class="text-center text-muted-2 mb-0">Thank you for being a part of Vibe.io and helping us build a great community. Let's code, connect, and conquer together!</p>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="border-top border-subtle mt-4">
+      <div class="container py-4">
+        <div class="row align-items-center">
+          <div class="col-md-6 d-flex align-items-center gap-3">
+            <div class="text-white fw-bold"><a href="index.html" style="text-decoration: none;">Vibe.io</a></div>
+            <nav class="d-flex gap-3">
+              <a href="about.html" class="small text-decoration-none">About</a>
+              <a href="guidelines.html" class="small text-decoration-none">Guidelines</a>
+              <a href="contact.html" class="small text-decoration-none">Contact</a>
+            </nav>
+          </div>
+          <div class="col-md-6 mt-3 mt-md-0 d-flex align-items-center gap-3 justify-content-md-end">
+            <a href="#" class="p-2 rounded"><i data-lucide="github"></i></a>
+            <a href="#" class="p-2 rounded"><i data-lucide="twitter"></i></a>
+            <a href="#" class="p-2 rounded"><i data-lucide="linkedin"></i></a>
+            <div class="small text-muted-2">© 2025 Vibe.io - Built by students, for students.</div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.286.0/dist/lucide.min.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', ()=>{ if(typeof lucide!=='undefined') lucide.replace(); });</script>
+  <script src="assets/js/auth-nav.js"></script>
+  </div>
+</body>
+</html>

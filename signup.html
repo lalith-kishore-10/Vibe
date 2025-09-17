@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up — Vibe.io</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a, #1e1b4b); color: #e2e8f0; }
+    .card-surface { background: rgba(30, 41, 59, 0.6); border-color: rgba(148, 163, 184, 0.25); backdrop-filter: blur(6px); }
+    .btn.vibe-gradient { background-image: linear-gradient(to right, #7c3aed, #0ea5e9); color: #fff; border: none; }
+  </style>
+</head>
+<body>
+  <main class="d-flex align-items-center min-vh-100">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6 col-xl-5">
+          <div class="card card-surface shadow-lg text-white">
+            <div class="card-body p-4 p-lg-5">
+              <h2 class="h3 fw-bold text-center mb-4">Join the Community</h2>
+              <form id="signup-form">
+                <div class="mb-3">
+                  <label for="fullName" class="form-label small">Full Name</label>
+                  <input type="text" class="form-control" id="fullName" required>
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label small">Email</label>
+                  <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                  <label for="college" class="form-label small">College / University</label>
+                  <input type="text" class="form-control" id="college" required>
+                </div>
+                <div class="mb-4">
+                  <label for="password" class="form-label small">Password</label>
+                  <input type="password" class="form-control" id="password" required>
+                </div>
+                <div class="d-grid">
+                  <button type="submit" class="btn vibe-gradient btn-lg">Create Account</button>
+                </div>
+              </form>
+              <p class="text-center small mt-4 mb-0">Already have an account? <a href="login.html" class="text-info">Login</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseClient = supabase.createClient(
+      "https://poekchmrknttynedwpwm.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA"
+    );
+
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fullName = document.getElementById("fullName").value;
+      const email = document.getElementById("email").value;
+      const college = document.getElementById("college").value;
+      const password = document.getElementById("password").value;
+
+      // Step 1: Create Auth User
+      const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+        email, password
+      });
+      if (signUpError) return alert("Signup error: " + signUpError.message);
+
+      const userFromSignUp = signUpData.user;
+      if (!userFromSignUp) return alert("Signup failed: no user returned");
+
+      // Try to sign the user in immediately so we have an auth session for RLS-protected inserts.
+      const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+      if (signInError) {
+        // Common case: user must confirm email before sign-in. Defer profile creation until first successful login.
+        localStorage.setItem('pendingProfile', JSON.stringify({ email, fullName, college }));
+        alert("Signup successful! Please confirm your email before login. Your profile will be created when you first sign in.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const user = signInData.user ?? userFromSignUp;
+      if (!user) return alert("Signup flow error: no user available after sign-in");
+
+      // Upsert profile while authenticated so RLS policies that require auth.uid() = id will pass.
+      const { error: upsertError } = await supabaseClient
+        .from("profiles")
+        .upsert([{ id: user.id, full_name: fullName, college: college }]);
+
+      if (upsertError) {
+        // If upsert failed for some reason, persist pending data and proceed to login page.
+        localStorage.setItem('pendingProfile', JSON.stringify({ email, fullName, college }));
+        alert("Signup created but profile upsert failed: " + upsertError.message + ". We'll complete the profile when you next login.");
+        window.location.href = "login.html";
+      } else {
+        localStorage.removeItem('pendingProfile');
+        alert("Signup successful! You are signed in and your profile was created.");
+        window.location.href = "profile.html";
+      }
+    });
+  </script>
+  <script src="assets/js/auth-nav.js"></script>
+</body>
+</html>
