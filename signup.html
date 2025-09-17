@@ -40,6 +40,10 @@
                 <div class="d-grid">
                   <button type="submit" class="btn vibe-gradient btn-lg">Create Account</button>
                 </div>
+                <div class="form-check form-switch mt-3">
+                  <input class="form-check-input" type="checkbox" id="agreeGuidelines">
+                  <label class="form-check-label small text-muted-2" for="agreeGuidelines">I agree to the <a href="guidelines.html" class="link-accent">guidelines</a> of the community</label>
+                </div>
               </form>
               <p class="text-center small mt-4 mb-0">Already have an account? <a href="login.html" class="text-info">Login</a></p>
             </div>
@@ -59,6 +63,8 @@
 
     document.getElementById("signup-form").addEventListener("submit", async (e) => {
       e.preventDefault();
+      const agree = document.getElementById('agreeGuidelines');
+      if (!agree || !agree.checked) return alert('You must agree to the community guidelines before signing up.');
       const fullName = document.getElementById("fullName").value;
       const email = document.getElementById("email").value;
       const college = document.getElementById("college").value;
