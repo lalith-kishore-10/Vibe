@@ -49,6 +49,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.286.0/dist/lucide.min.js"></script>
   <script src="assets/js/auth-nav.js"></script>
+  <script src="assets/js/discord-fab.js"></script>
   <script>
     (function(){
       try {
@@ -62,11 +63,13 @@
   const auth = JSON.parse(raw);
   const displayName = auth.name || auth.fullName || (auth.email ? auth.email.split('@')[0] : '');
   const role = auth.role || 'Member';
+  let collegeFromAuth = auth.college || auth.collegename || '';
   let html = '<dl class="row">';
   html += '<dt class="col-sm-4 text-muted-2">Name</dt><dd class="col-sm-8" style="color: white;">' + (displayName || '') + '</dd>';
   html += '<dt class="col-sm-4 text-muted-2">Email</dt><dd class="col-sm-8" style="color: white;">' + (auth.email || '') + '</dd>';
   html += '<dt class="col-sm-4 text-muted-2">Role</dt><dd class="col-sm-8" style="color: white;">' + role + '</dd>';
-  // html += '<dt class="col-sm-4 text-muted-2">College</dt><dd class="col-sm-8" style="color: white;">' + college + '</dd>';
+        // Show college from auth if available, otherwise from pending profile
+        let collegeToShow = collegeFromAuth;
         if (pending) {
           const p = JSON.parse(pending);
           html += '<dt class="col-sm-4 text-muted-2">Pending Profile</dt><dd class="col-sm-8">Name: ' + (p.fullName||'') + '<br>College: ' + (p.college||'') + '</dd>';
@@ -74,10 +77,84 @@
           if (!displayName && p.fullName) {
             html = html.replace('<dd class="col-sm-8" style="color: white;"></dd>', '<dd class="col-sm-8" style="color: white;">' + p.fullName + '</dd>');
           }
+          if (!collegeToShow && p.college) collegeToShow = p.college;
+        }
+        // Render college display + edit button (editable area below)
+        if (collegeToShow) {
+          html += '<dt class="col-sm-4 text-muted-2">College</dt><dd class="col-sm-8" id="collegeDisplay" style="color: white;">' + collegeToShow + '</dd>';
+        } else {
+          html += '<dt class="col-sm-4 text-muted-2">College</dt><dd class="col-sm-8" id="collegeDisplay" style="color: white;">Not provided</dd>';
         }
         html += '</dl>';
-        html += '<div class="mt-3"><a href="index.html" class="btn btn-outline-light me-2">Home</a><button id="logoutBtn" class="btn vibe-gradient">Logout</button></div>';
+        // Editable form (hidden by default)
+        html += '<div id="collegeEditArea" class="mt-3" style="display:none;">';
+        html += '<div class="input-group mb-2"><input id="collegeInput" class="form-control" placeholder="Enter your college or university"></div>';
+        html += '<div><button id="saveCollegeBtn" class="btn vibe-gradient me-2">Save</button><button id="cancelCollegeBtn" class="btn btn-outline-light">Cancel</button></div>';
+        html += '</div>';
+        html += '<div class="mt-3"><a href="index.html" class="btn btn-outline-light me-2">Home</a><button id="editCollegeBtn" class="btn btn-secondary me-2">Edit College</button><button id="logoutBtn" class="btn vibe-gradient">Logout</button></div>';
         el.innerHTML = html;
+        // Wire up edit/save/cancel handlers
+        const editBtn = document.getElementById('editCollegeBtn');
+        const editArea = document.getElementById('collegeEditArea');
+        const collegeInput = document.getElementById('collegeInput');
+        const saveBtn = document.getElementById('saveCollegeBtn');
+        const cancelBtn = document.getElementById('cancelCollegeBtn');
+        const collegeDisplay = document.getElementById('collegeDisplay');
+
+        editBtn.addEventListener('click', () => {
+          collegeInput.value = collegeToShow || '';
+          editArea.style.display = '';
+          editBtn.style.display = 'none';
+          collegeInput.focus();
+        });
+
+        cancelBtn.addEventListener('click', () => {
+          editArea.style.display = 'none';
+          editBtn.style.display = '';
+        });
+
+        saveBtn.addEventListener('click', async () => {
+          const newCollege = collegeInput.value.trim();
+          // Update local UI immediately
+          collegeToShow = newCollege;
+          collegeDisplay.textContent = newCollege || 'Not provided';
+          editArea.style.display = 'none';
+          editBtn.style.display = '';
+
+          // Update localStorage
+          try {
+            const storedRaw = localStorage.getItem('vibe_logged_in');
+            if (storedRaw) {
+              const stored = JSON.parse(storedRaw);
+              stored.college = newCollege;
+              localStorage.setItem('vibe_logged_in', JSON.stringify(stored));
+            }
+          } catch (e) { console.warn('Failed to update localStorage vibe_logged_in', e); }
+
+          // Best-effort: upsert to Supabase profiles table if supabase client available
+          try {
+            if (typeof supabase !== 'undefined' && typeof supabase.createClient === 'function') {
+              const client = supabase.createClient('https://poekchmrknttynedwpwm.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA');
+              const userId = auth.id || null;
+              const payload = userId ? { id: userId, college: newCollege } : { college: newCollege };
+              if (userId) {
+                await client.from('profiles').upsert([payload]);
+              } else if (auth.email) {
+                await client.from('profiles').upsert([{ email: auth.email, college: newCollege }]);
+              }
+            }
+          } catch (err) {
+            console.warn('Could not upsert college to Supabase:', err);
+            // Save to pendingProfile so it can be applied later
+            try {
+              const pendingRaw = localStorage.getItem('pendingProfile');
+              const pendingObj = pendingRaw ? JSON.parse(pendingRaw) : {};
+              pendingObj.college = newCollege;
+              localStorage.setItem('pendingProfile', JSON.stringify(pendingObj));
+            } catch (e) {}
+          }
+        });
+
         document.getElementById('logoutBtn').addEventListener('click', () => {
           localStorage.removeItem('vibe_logged_in');
           window.location.href = 'index.html';
