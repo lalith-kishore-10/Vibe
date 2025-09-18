@@ -61,6 +61,65 @@
     .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
     footer a { color: var(--vibe-text); opacity: 0.9; }
     footer a:hover { opacity: 1; }
+/* Styling for the always-open Discord button */
+.discord-fab-btn-open {
+  /* Positioning and size for the open state */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 170px; /* The width needed to show the text */
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  /* Styling */
+  background: #5865F2; /* Discord's official color */
+  color: white;
+  border-radius: 50px; /* Pill shape */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  text-decoration: none;
+  z-index: 9999;
+  
+  /* Adds a subtle pulsing animation to draw attention */
+  animation: pulse-fab 2s infinite;
+}
+
+/* Style for the SVG icon within the open button */
+.discord-fab-btn-open svg {
+  min-width: 24px;
+  height: 24px;
+  margin-right: 8px; /* Adds space between the icon and text */
+}
+
+/* Style for the text label within the open button */
+.discord-fab-btn-open .discord-fab-label {
+  white-space: nowrap;
+  font-family: sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 1; /* The text is always visible */
+  margin-left: 0;
+}
+
+/* The pulsing animation */
+@keyframes pulse-fab {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 15px rgba(88, 101, 242, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(88, 101, 242, 0);
+  }
+}
   </style>
 </head>
 <body>
