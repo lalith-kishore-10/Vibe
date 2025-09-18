@@ -1,7 +1,7 @@
 // Inject a floating Discord button (bottom-right) across the site
 (function(){
   try {
-    const INVITE = 'https://discord.gg/your-invite'; // <-- replace with your real invite
+    const INVITE = 'https://discord.gg/NEBbag8B'; // <-- replace with your real invite
     const id = 'vibe-discord-fab';
     if (document.getElementById(id)) return;
 
