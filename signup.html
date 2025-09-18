@@ -10,8 +10,67 @@
     body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a, #1e1b4b); color: #e2e8f0; }
     .card-surface { background: rgba(30, 41, 59, 0.6); border-color: rgba(148, 163, 184, 0.25); backdrop-filter: blur(6px); }
     .btn.vibe-gradient { background-image: linear-gradient(to right, #7c3aed, #0ea5e9); color: #fff; border: none; }
+    :root {
+      --vibe-primary: #7c3aed; --vibe-primary-hover: #6d28d9; --vibe-accent: #0ea5e9; --vibe-bg-start: #0f172a; --vibe-bg-end: #1e1b4b; --vibe-surface: rgba(30, 41, 59, 0.6); --vibe-border: rgba(148, 163, 184, 0.25); --vibe-text: #e2e8f0; --vibe-muted: #94a3b8;
+    }
+     /* Utility/theme helpers */
+    .text-muted-2 { color: var(--vibe-muted) !important; }
+    .bg-dark-transparent { background-color: rgba(0, 0, 0, 0.55); backdrop-filter: saturate(120%) blur(6px); }
+    .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; }
+    .border-subtle { border-color: var(--vibe-border) !important; }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--vibe-bg-start), var(--vibe-bg-end)); color: var(--vibe-text); }
+    .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; backdrop-filter: saturate(120%) blur(6px); }
+    .btn.vibe-gradient { background-image: linear-gradient(to right, var(--vibe-primary), var(--vibe-accent)); color: #fff; border: none; }
+    .btn.vibe-gradient:hover { filter: brightness(1.08); }
+    .form-control { background-color: rgba(0,0,0,0.2); border-color: var(--vibe-border); color: var(--vibe-text); }
+    .form-control:focus { background-color: rgba(0,0,0,0.3); border-color: var(--vibe-accent); color: var(--vibe-text); box-shadow: 0 0 0 0.25rem rgba(14, 165, 233, 0.25); }
+    .form-control::placeholder { color: var(--vibe-muted); }
+    .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
+    .text-muted-2 { color: var(--vibe-muted) !important; }
+    .link-accent { color: var(--vibe-accent); text-decoration: none; }
+    .link-accent:hover { color: #38bdf8; }
+    /* Buttons */
+    .btn.vibe-primary { background-color: var(--vibe-primary); color: #fff; border: none; }
+    .btn.vibe-primary:hover { background-color: var(--vibe-primary-hover); color: #fff; }
+    .btn.vibe-gradient {
+      background-image: linear-gradient(to right, var(--vibe-primary), var(--vibe-accent));
+      color: #fff; border: none;
+    }
+    .btn.vibe-gradient:hover { filter: brightness(1.08); }
+    .btn-outline-light { border-color: rgba(226,232,240,0.6); color: #fff; }
+    .btn-outline-light:hover { background-color: #fff !important; color: #1e1b4b !important; }
+    /* Navbar */
+    .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
+    .navbar-dark .nav-link:hover { opacity: 1; }
+    .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
+    /* Footer */
+    footer a { color: var(--vibe-text); opacity: 0.9; }
+    footer a:hover { opacity: 1; }
   </style>
 </head>
+  <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
+      <div class="container px-4 px-sm-3 px-lg-4">
+        <nav class="navbar navbar-expand-md navbar-dark">
+          <div class="container-fluid">
+            <a href="index.html" class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none">
+              <span class="fs-3 fw-bold">Vibe<span class="text-primary">.io</span></span>
+              <span class="ms-2 text-muted-2 small d-none d-sm-inline">Student Dev Community</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <i data-lucide="menu"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <div class="ms-auto d-flex gap-3">
+                <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center">Login</a>
+               <!-- <a href="signup.html" class="btn vibe-gradient">Join for Free</a> -->
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+  </header>
 <body>
   <main class="d-flex align-items-center min-vh-100">
     <div class="container">
