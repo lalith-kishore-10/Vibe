@@ -377,8 +377,10 @@
           console.log('[DEBUG] Registration rows:', regData);
           if (regData) {
             registrations = regData.filter(r => {
-              // Team lead
+              // Team lead may be stored as a user id (legacy) or as the lead's email (new)
               if (userId && r.team_lead === userId) return true;
+              // If team_lead is an email string, match against user's email
+              if (userEmail && typeof r.team_lead === 'string' && r.team_lead.toLowerCase() === userEmail) return true;
               // Team member by email
               if (userEmail && Array.isArray(r.members)) {
                 return r.members.some(m => m.email && m.email.toLowerCase() === userEmail);
@@ -480,10 +482,13 @@
           alert(`Team size must be between ${min} and ${max}`);
           return;
         }
+        // Make the first member's email the team_lead (normalize to lowercase).
+        // Fall back to authenticated user id if no members provided or email missing.
+        const firstMemberEmail = members.length > 0 && members[0].email ? members[0].email.toLowerCase() : null;
         const data = {
           event_id,
           team_name,
-          team_lead: auth && auth.id ? auth.id : null,
+          team_lead: firstMemberEmail || (auth && auth.id ? auth.id : null),
           members
         };
         const { error } = await client.from('registrations').insert([data]);
