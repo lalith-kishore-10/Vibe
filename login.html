@@ -244,7 +244,9 @@
               console.warn('Could not load profile for display name', e);
             }
 
+
             const stored = { email: userEmail, provider: 'supabase', role: 'Member' };
+            if (user && user.id) stored.id = user.id;
             if (name) stored.name = name;
             // If no profile name, try pendingProfile
             try {

@@ -160,10 +160,90 @@
               <h2 class="h3 fw-bold">What's On?</h2>
               <p class="text-muted-2 mb-0">Join upcoming workshops, hackathons, and community meetups.</p>
             </div>
-            <a href="#events" class="text-decoration-none fw-semibold small" style="color: var(--vibe-accent);">View all events</a>
+            <div class="d-flex align-items-center gap-2">
+              <a href="#events" class="text-decoration-none fw-semibold small" style="color: var(--vibe-accent);">View all events</a>
+              <button id="add-event-btn" class="btn vibe-primary d-none">Add Event</button>
+            </div>
           </div>
           <div class="mt-4">
-            <p class="text-muted-2">No events organized yet. Be the first to host one as an ambassador!</p>
+            <div id="events-list" class="row g-4 justify-content-start">
+              <p class="text-muted-2">Loading events...</p>
+            </div>
+          </div>
+          <!-- Registration Modal -->
+          <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content bg-dark text-light">
+                <form id="registerForm">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="registerModalLabel">Register for Event</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <input type="hidden" id="registerEventId" name="event_id">
+                    <div class="mb-3">
+                      <label for="teamName" class="form-label">Team Name</label>
+                      <input type="text" class="form-control" id="teamName" name="team_name" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Team Members</label>
+                      <div id="membersList">
+                        <div class="row g-2 mb-2 member-row">
+                          <div class="col"><input type="text" class="form-control" name="member_name" placeholder="Name" required></div>
+                          <div class="col"><input type="email" class="form-control" name="member_email" placeholder="Email" required></div>
+                        </div>
+                      </div>
+                      <button type="button" class="btn btn-outline-light btn-sm" id="addMemberBtn">Add Member</button>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn vibe-primary">Register</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- Event Creation Modal -->
+          <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content bg-dark text-light">
+                <form id="eventForm">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Add New Event</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label for="eventTitle" class="form-label">Title</label>
+                      <input type="text" class="form-control" id="eventTitle" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="eventDescription" class="form-label">Description</label>
+                      <textarea class="form-control" id="eventDescription" name="description" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3 row">
+                      <div class="col">
+                        <label for="minTeam" class="form-label">Min Team Size</label>
+                        <input type="number" class="form-control" id="minTeam" name="min_team_size" min="1" required>
+                      </div>
+                      <div class="col">
+                        <label for="maxTeam" class="form-label">Max Team Size</label>
+                        <input type="number" class="form-control" id="maxTeam" name="max_team_size" min="1" required>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="eventRules" class="form-label">Rules</label>
+                      <textarea class="form-control" id="eventRules" name="rules" rows="2"></textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn vibe-primary">Create Event</button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -226,6 +306,196 @@
             }).catch(()=>{});
           }
         } catch(e){}
+    });
+  </script>
+  <script src="assets/js/events-ambassador.js"></script>
+  <script>
+    // Show Add Event button if ambassador and wire up modal
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const btn = document.getElementById('add-event-btn');
+        if (window.isAmbassador && btn) {
+          btn.classList.remove('d-none');
+          btn.addEventListener('click', () => {
+            const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+            modal.show();
+          });
+        }
+      }, 400);
+
+      // Handle event form submission
+      const form = document.getElementById('eventForm');
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co';
+          const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA';
+          if (!window.supabase || typeof supabase.createClient !== 'function') return;
+          const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          const authRaw = localStorage.getItem('vibe_logged_in');
+          const auth = authRaw ? JSON.parse(authRaw) : null;
+          const data = {
+            title: form.title.value,
+            description: form.description.value,
+            min_team_size: parseInt(form.min_team_size.value, 10),
+            max_team_size: parseInt(form.max_team_size.value, 10),
+            rules: form.rules.value,
+            created_by: auth && auth.id ? auth.id : null
+          };
+          const { error } = await client.from('events').insert([data]);
+          if (error) {
+            alert('Error creating event: ' + error.message);
+          } else {
+            // Close modal and reset form
+            bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
+            form.reset();
+            alert('Event created successfully!');
+            // Refresh events list
+            loadEvents();
+          }
+        });
+      }
+
+      // Fetch and display events
+      async function loadEvents() {
+        const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA';
+        if (!window.supabase || typeof supabase.createClient !== 'function') return;
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const authRaw = localStorage.getItem('vibe_logged_in');
+        const auth = authRaw ? JSON.parse(authRaw) : null;
+        const userId = auth && auth.id ? auth.id : null;
+        // Fetch all events
+        const { data: events, error } = await client.from('events').select('*').order('created_at', { ascending: false });
+        // Fetch registrations for this user
+        let registrations = [];
+        let userEmail = auth && auth.email ? auth.email.toLowerCase() : null;
+        if (userId || userEmail) {
+          // Fetch all registrations for this user (as team lead or member)
+          const { data: regData } = await client.from('registrations').select('event_id, team_lead, members');
+          console.log('[DEBUG] Current user:', auth);
+          console.log('[DEBUG] Registration rows:', regData);
+          if (regData) {
+            registrations = regData.filter(r => {
+              // Team lead
+              if (userId && r.team_lead === userId) return true;
+              // Team member by email
+              if (userEmail && Array.isArray(r.members)) {
+                return r.members.some(m => m.email && m.email.toLowerCase() === userEmail);
+              }
+              return false;
+            }).map(r => r.event_id);
+          }
+          console.log('[DEBUG] Registered event_ids for this user:', registrations);
+        }
+        const list = document.getElementById('events-list');
+        if (error || !events || events.length === 0) {
+          list.innerHTML = '<p class="text-muted-2">No events organized yet. Be the first to host one as an ambassador!</p>';
+          return;
+        }
+        list.innerHTML = '';
+        events.forEach(event => {
+          const col = document.createElement('div');
+          col.className = 'col-12 col-md-6 col-lg-4';
+          const card = document.createElement('div');
+          card.className = 'card card-surface h-100';
+          let buttonHtml = '';
+          if (registrations.includes(event.id)) {
+            buttonHtml = '<button class="btn btn-success btn-sm w-100" disabled>Registered</button>';
+          } else {
+            buttonHtml = `<button class="btn btn-outline-light btn-sm w-100 register-btn" data-event-id="${event.id}" data-min="${event.min_team_size}" data-max="${event.max_team_size}">Register</button>`;
+          }
+          card.innerHTML = `
+            <div class="card-body d-flex flex-column justify-content-between h-100">
+              <div>
+                <h5 class="card-title mb-1 text-white">${event.title}</h5>
+                <div class="mb-2 small text-muted-2">Team size: ${event.min_team_size} - ${event.max_team_size}</div>
+                <p class="card-text">${event.description || ''}</p>
+                <div class="mb-2"><strong>Rules:</strong> <span class="text-muted-2">${event.rules || 'None'}</span></div>
+              </div>
+              <div class="mt-2">
+                ${buttonHtml}
+              </div>
+            </div>
+          `;
+          col.appendChild(card);
+          list.appendChild(col);
+        });
+        // Register button logic
+        document.querySelectorAll('.register-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            document.getElementById('registerEventId').value = this.getAttribute('data-event-id');
+            // Reset form and members
+            document.getElementById('registerForm').reset();
+            const membersList = document.getElementById('membersList');
+            membersList.innerHTML = '';
+            // Add one member row by default
+            addMemberRow();
+            // Set min/max for members
+            membersList.setAttribute('data-min', this.getAttribute('data-min'));
+            membersList.setAttribute('data-max', this.getAttribute('data-max'));
+            new bootstrap.Modal(document.getElementById('registerModal')).show();
+          });
+        });
+      // Add member row logic
+      function addMemberRow() {
+        const membersList = document.getElementById('membersList');
+        const row = document.createElement('div');
+        row.className = 'row g-2 mb-2 member-row';
+        row.innerHTML = `
+          <div class="col"><input type="text" class="form-control" name="member_name" placeholder="Name" required></div>
+          <div class="col"><input type="email" class="form-control" name="member_email" placeholder="Email" required></div>
+        `;
+        membersList.appendChild(row);
+      }
+      document.getElementById('addMemberBtn').addEventListener('click', () => {
+        const membersList = document.getElementById('membersList');
+        const max = parseInt(membersList.getAttribute('data-max') || '10', 10);
+        const current = membersList.querySelectorAll('.member-row').length;
+        if (current < max) addMemberRow();
+      });
+
+      // Registration form submit
+      document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA';
+        if (!window.supabase || typeof supabase.createClient !== 'function') return;
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const authRaw = localStorage.getItem('vibe_logged_in');
+        const auth = authRaw ? JSON.parse(authRaw) : null;
+        const event_id = document.getElementById('registerEventId').value;
+        const team_name = document.getElementById('teamName').value;
+        const memberRows = document.querySelectorAll('#membersList .member-row');
+        const members = [];
+        memberRows.forEach(row => {
+          const name = row.querySelector('input[name="member_name"]').value;
+          const email = row.querySelector('input[name="member_email"]').value;
+          if (name && email) members.push({ name, email });
+        });
+        // Validate min/max
+        const min = parseInt(document.getElementById('membersList').getAttribute('data-min') || '1', 10);
+        const max = parseInt(document.getElementById('membersList').getAttribute('data-max') || '10', 10);
+        if (members.length < min || members.length > max) {
+          alert(`Team size must be between ${min} and ${max}`);
+          return;
+        }
+        const data = {
+          event_id,
+          team_name,
+          team_lead: auth && auth.id ? auth.id : null,
+          members
+        };
+        const { error } = await client.from('registrations').insert([data]);
+        if (error) {
+          alert('Error registering: ' + error.message);
+        } else {
+          bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+          alert('Registration successful!');
+        }
+      });
+      }
+      loadEvents();
     });
   </script>
   <script src="assets/js/auth-nav.js"></script>
