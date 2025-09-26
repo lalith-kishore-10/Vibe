@@ -169,6 +169,30 @@
             <div id="events-list" class="row g-4 justify-content-start">
               <p class="text-muted-2">Loading events...</p>
             </div>
+            <!-- Project Link Upload Modal -->
+            <div class="modal fade" id="projectLinkModal" tabindex="-1" aria-labelledby="projectLinkModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content bg-dark text-light">
+                  <form id="projectLinkForm">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="projectLinkModalLabel">Upload Project Link</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" id="projectLinkRegId" name="reg_id">
+                      <div class="mb-3">
+                        <label for="projectLinkInput" class="form-label">Project Link (GitHub, etc.)</label>
+                        <input type="url" class="form-control" id="projectLinkInput" name="project_link" placeholder="https://github.com/yourproject" required>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <button type="submit" class="btn vibe-primary">Save Link</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
           </div>
           <!-- Registration Modal -->
           <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
@@ -187,13 +211,8 @@
                     </div>
                     <div class="mb-3">
                       <label class="form-label">Team Members</label>
-                      <div id="membersList">
-                        <div class="row g-2 mb-2 member-row">
-                          <div class="col"><input type="text" class="form-control" name="member_name" placeholder="Name" required></div>
-                          <div class="col"><input type="email" class="form-control" name="member_email" placeholder="Email" required></div>
-                        </div>
-                      </div>
-                      <button type="button" class="btn btn-outline-light btn-sm" id="addMemberBtn">Add Member</button>
+                      <div id="membersList"></div>
+                      <button type="button" class="btn btn-outline-light btn-sm mt-2" id="addMemberBtn">Add Member</button>
                     </div>
                   </div>
                   <div class="modal-footer">
@@ -370,25 +389,21 @@
         // Fetch registrations for this user
         let registrations = [];
         let userEmail = auth && auth.email ? auth.email.toLowerCase() : null;
+        let myRegRows = [];
         if (userId || userEmail) {
           // Fetch all registrations for this user (as team lead or member)
-          const { data: regData } = await client.from('registrations').select('event_id, team_lead, members');
-          console.log('[DEBUG] Current user:', auth);
-          console.log('[DEBUG] Registration rows:', regData);
+          const { data: regData } = await client.from('registrations').select('id, event_id, team_lead, members, project_link, link_uploaded_at, created_at');
           if (regData) {
-            registrations = regData.filter(r => {
-              // Team lead may be stored as a user id (legacy) or as the lead's email (new)
+            myRegRows = regData.filter(r => {
               if (userId && r.team_lead === userId) return true;
-              // If team_lead is an email string, match against user's email
               if (userEmail && typeof r.team_lead === 'string' && r.team_lead.toLowerCase() === userEmail) return true;
-              // Team member by email
               if (userEmail && Array.isArray(r.members)) {
                 return r.members.some(m => m.email && m.email.toLowerCase() === userEmail);
               }
               return false;
-            }).map(r => r.event_id);
+            });
+            registrations = myRegRows.map(r => r.event_id);
           }
-          console.log('[DEBUG] Registered event_ids for this user:', registrations);
         }
         const list = document.getElementById('events-list');
         if (error || !events || events.length === 0) {
@@ -402,8 +417,26 @@
           const card = document.createElement('div');
           card.className = 'card card-surface h-100';
           let buttonHtml = '';
+          let regRow = myRegRows.find(r => r.event_id === event.id && r.team_lead === userId);
           if (registrations.includes(event.id)) {
             buttonHtml = '<button class="btn btn-success btn-sm w-100" disabled>Registered</button>';
+            // If team lead, show upload/edit link button
+            if (regRow) {
+              // Calculate if within 24 hrs
+              let canEdit = false;
+              let regTime = regRow.created_at ? new Date(regRow.created_at) : null;
+              let now = new Date();
+              if (regTime && (now - regTime) < 24*60*60*1000) {
+                canEdit = true;
+              }
+              if (canEdit) {
+                buttonHtml += `<button class="btn btn-warning btn-sm w-100 mt-2 upload-link-btn" data-reg-id="${regRow.id}" data-link="${regRow.project_link || ''}">${regRow.project_link ? 'Edit Project Link' : 'Upload Project Link'}</button>`;
+              } else if (regRow.project_link) {
+                buttonHtml += `<div class="mt-2"><span class="badge bg-info">Project Link Submitted</span><br><a href="${regRow.project_link}" target="_blank" class="text-light">${regRow.project_link}</a></div>`;
+              } else {
+                buttonHtml += `<div class="mt-2"><span class="badge bg-danger">No Project Link Submitted</span></div>`;
+              }
+            }
           } else {
             buttonHtml = `<button class="btn btn-outline-light btn-sm w-100 register-btn" data-event-id="${event.id}" data-min="${event.min_team_size}" data-max="${event.max_team_size}">Register</button>`;
           }
@@ -412,8 +445,8 @@
               <div>
                 <h5 class="card-title mb-1 text-white">${event.title}</h5>
                 <div class="mb-2 small text-muted-2">Team size: ${event.min_team_size} - ${event.max_team_size}</div>
-                <p class="card-text">${event.description || ''}</p>
-                <div class="mb-2"><strong>Rules:</strong> <span class="text-muted-2">${event.rules || 'None'}</span></div>
+                <p class="card-text text-muted-2">${event.description || ''}</p>
+                <div class="mb-2 text-white"><strong>Rules:</strong> <span class="text-muted-2">${event.rules || 'None'}</span></div>
               </div>
               <div class="mt-2">
                 ${buttonHtml}
@@ -427,78 +460,132 @@
         document.querySelectorAll('.register-btn').forEach(btn => {
           btn.addEventListener('click', function() {
             document.getElementById('registerEventId').value = this.getAttribute('data-event-id');
-            // Reset form and members
             document.getElementById('registerForm').reset();
+            // Reset members list
             const membersList = document.getElementById('membersList');
             membersList.innerHTML = '';
-            // Add one member row by default
             addMemberRow();
-            // Set min/max for members
-            membersList.setAttribute('data-min', this.getAttribute('data-min'));
-            membersList.setAttribute('data-max', this.getAttribute('data-max'));
             new bootstrap.Modal(document.getElementById('registerModal')).show();
           });
         });
-      // Add member row logic
-      function addMemberRow() {
-        const membersList = document.getElementById('membersList');
-        const row = document.createElement('div');
-        row.className = 'row g-2 mb-2 member-row';
-        row.innerHTML = `
-          <div class="col"><input type="text" class="form-control" name="member_name" placeholder="Name" required></div>
-          <div class="col"><input type="email" class="form-control" name="member_email" placeholder="Email" required></div>
-        `;
-        membersList.appendChild(row);
-      }
-      document.getElementById('addMemberBtn').addEventListener('click', () => {
-        const membersList = document.getElementById('membersList');
-        const max = parseInt(membersList.getAttribute('data-max') || '10', 10);
-        const current = membersList.querySelectorAll('.member-row').length;
-        if (current < max) addMemberRow();
-      });
-
-      // Registration form submit
-      document.getElementById('registerForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA';
-        if (!window.supabase || typeof supabase.createClient !== 'function') return;
-        const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const authRaw = localStorage.getItem('vibe_logged_in');
-        const auth = authRaw ? JSON.parse(authRaw) : null;
-        const event_id = document.getElementById('registerEventId').value;
-        const team_name = document.getElementById('teamName').value;
-        const memberRows = document.querySelectorAll('#membersList .member-row');
-        const members = [];
-        memberRows.forEach(row => {
-          const name = row.querySelector('input[name="member_name"]').value;
-          const email = row.querySelector('input[name="member_email"]').value;
-          if (name && email) members.push({ name, email });
+        // Upload/Edit Project Link button logic
+        document.querySelectorAll('.upload-link-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const regId = this.getAttribute('data-reg-id');
+            const link = this.getAttribute('data-link') || '';
+            document.getElementById('projectLinkRegId').value = regId;
+            document.getElementById('projectLinkInput').value = link;
+            new bootstrap.Modal(document.getElementById('projectLinkModal')).show();
+          });
         });
-        // Validate min/max
-        const min = parseInt(document.getElementById('membersList').getAttribute('data-min') || '1', 10);
-        const max = parseInt(document.getElementById('membersList').getAttribute('data-max') || '10', 10);
-        if (members.length < min || members.length > max) {
-          alert(`Team size must be between ${min} and ${max}`);
-          return;
+
+        // Add member row logic
+        function addMemberRow() {
+          const membersList = document.getElementById('membersList');
+          const row = document.createElement('div');
+          row.className = 'row g-2 mb-2 member-row';
+          row.innerHTML = `
+            <div class="col"><input type="text" class="form-control" name="member_name" placeholder="Name" required></div>
+            <div class="col"><input type="email" class="form-control" name="member_email" placeholder="Email" required></div>
+            <div class="col-auto d-flex align-items-center">
+              <button type="button" class="btn btn-outline-danger btn-sm remove-member-btn" title="Remove member">&times;</button>
+            </div>
+          `;
+          membersList.appendChild(row);
+          updateRemoveButtons();
         }
-        // Make the first member's email the team_lead (normalize to lowercase).
-        // Fall back to authenticated user id if no members provided or email missing.
-        const firstMemberEmail = members.length > 0 && members[0].email ? members[0].email.toLowerCase() : null;
-        const data = {
-          event_id,
-          team_name,
-          team_lead: firstMemberEmail || (auth && auth.id ? auth.id : null),
-          members
-        };
-        const { error } = await client.from('registrations').insert([data]);
-        if (error) {
-          alert('Error registering: ' + error.message);
-        } else {
-          bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
-          alert('Registration successful!');
+
+        function updateRemoveButtons() {
+          const membersList = document.getElementById('membersList');
+          const rows = membersList.querySelectorAll('.member-row');
+          rows.forEach((row, idx) => {
+            const btn = row.querySelector('.remove-member-btn');
+            if (btn) {
+              btn.style.display = (rows.length > 1) ? '' : 'none';
+              btn.onclick = function() {
+                if (rows.length > 1) {
+                  row.remove();
+                  updateRemoveButtons();
+                }
+              };
+            }
+          });
         }
-      });
+        document.getElementById('addMemberBtn').addEventListener('click', () => {
+          addMemberRow();
+          updateRemoveButtons();
+        });
+
+        // Registration form submit
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const event_id = document.getElementById('registerEventId').value;
+          const teamName = document.getElementById('teamName').value;
+          // Collect members as array of objects
+          const membersList = document.getElementById('membersList');
+          const memberRows = membersList.querySelectorAll('.member-row');
+          const members = Array.from(memberRows).map(row => {
+            return {
+              name: row.querySelector('input[name="member_name"]').value,
+              email: row.querySelector('input[name="member_email"]').value.toLowerCase()
+            };
+          });
+
+          // Get the logged-in user from localStorage
+          const authRaw = localStorage.getItem('vibe_logged_in');
+          const auth = authRaw ? JSON.parse(authRaw) : null;
+
+          if (!auth || !auth.id) {
+            alert('You must be logged in to register.');
+            return;
+          }
+
+          const data = {
+            event_id,
+            team_name: teamName,
+            team_lead: auth.id,   // use UUID from Supabase auth
+            members
+          };
+
+          const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co';
+          const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA';
+          if (!window.supabase || typeof supabase.createClient !== 'function') return;
+          const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          const { error } = await client.from('registrations').insert([data]);
+
+          if (error) {
+            console.error('Error registering:', error);
+            alert('Registration failed: ' + error.message);
+          } else {
+            alert('Team registered successfully!');
+            window.location.href = "events.html";
+          }
+        });
+
+        // Project Link upload/edit form submit
+        document.getElementById('projectLinkForm').addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const regId = document.getElementById('projectLinkRegId').value;
+          const link = document.getElementById('projectLinkInput').value;
+          const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co';
+          const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA';
+          if (!window.supabase || typeof supabase.createClient !== 'function') return;
+          const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          // Set link_uploaded_at to now
+          const now = new Date().toISOString();
+          const { error } = await client.from('registrations').update({ project_link: link, link_uploaded_at: now }).eq('id', regId);
+          if (error) {
+            alert('Error uploading link: ' + error.message);
+          } else {
+            alert('Project link saved!');
+            bootstrap.Modal.getInstance(document.getElementById('projectLinkModal')).hide();
+            loadEvents();
+            // If on projects page, reload to show instantly
+            if (window.location.pathname.includes('projects.html')) {
+              window.location.reload();
+            }
+          }
+        });
       }
       loadEvents();
     });
