@@ -728,6 +728,19 @@
                 if (regTime && now - regTime < 6 * 60 * 60 * 1000) {
                   canUnregister = true;
                 }
+
+                // Debug logging
+                console.log("Registration time check:", {
+                  eventTitle: event.title,
+                  regTime: regTime,
+                  now: now,
+                  timeDiff: regTime
+                    ? (now - regTime) / (60 * 60 * 1000)
+                    : "no regTime",
+                  sixHoursMs: 6 * 60 * 60 * 1000,
+                  canUnregister: canUnregister,
+                });
+
                 if (canUnregister) {
                   buttonHtml += `<button class="btn btn-danger btn-sm w-100 mt-2 unregister-btn" data-reg-id="${regRow.id}" data-event-name="${event.title}">Unregister</button>`;
                 }

@@ -499,6 +499,47 @@
                   placeholder="List the event rules and guidelines..."
                 ></textarea>
               </div>
+              <div class="mb-3 row">
+                <div class="col">
+                  <label for="registrationStart" class="form-label"
+                    >Registration Starts</label
+                  >
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="registrationStart"
+                    name="registration_start"
+                    required
+                  />
+                </div>
+                <div class="col">
+                  <label for="registrationEnd" class="form-label"
+                    >Registration Ends</label
+                  >
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="registrationEnd"
+                    name="registration_end"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="resultDate" class="form-label"
+                  >Result Publication Date</label
+                >
+                <input
+                  type="datetime-local"
+                  class="form-control"
+                  id="resultDate"
+                  name="result_date"
+                  required
+                />
+                <small class="text-muted"
+                  >When the event results will be announced</small
+                >
+              </div>
             </div>
             <div class="modal-footer border-subtle">
               <button
@@ -603,7 +644,6 @@
               <i data-lucide="calendar-x" style="width: 48px; height: 48px;" class="text-muted-2 mb-3"></i>
               <h5 class="text-muted-2">No Events Yet</h5>
               <p class="text-muted-2 small">Create your first event to start managing registrations.</p>
-              <a href="events.html" class="btn vibe-primary mt-3">Create Event</a>
             </div>
           </div>
         `;
@@ -1049,6 +1089,9 @@
               min_team_size: parseInt(form.min_team_size.value, 10),
               max_team_size: parseInt(form.max_team_size.value, 10),
               rules: form.rules.value,
+              registration_start: form.registration_start.value,
+              registration_end: form.registration_end.value,
+              result_date: form.result_date.value,
               created_by: auth.id,
             };
 
@@ -1056,6 +1099,23 @@
             if (data.max_team_size < data.min_team_size) {
               alert(
                 "Maximum team size must be greater than or equal to minimum team size."
+              );
+              return;
+            }
+
+            // Validate dates
+            const regStart = new Date(data.registration_start);
+            const regEnd = new Date(data.registration_end);
+            const resultDate = new Date(data.result_date);
+
+            if (regEnd <= regStart) {
+              alert("Registration end date must be after start date.");
+              return;
+            }
+
+            if (resultDate <= regEnd) {
+              alert(
+                "Result publication date must be after registration end date."
               );
               return;
             }
