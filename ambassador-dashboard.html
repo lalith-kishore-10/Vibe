@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ambassador Dashboard — Vibe.io</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.286.0/dist/lucide.min.js"></script>
+    <style>
+      :root {
+        --vibe-primary: #7c3aed;
+        --vibe-primary-hover: #6d28d9;
+        --vibe-accent: #0ea5e9;
+        --vibe-bg-start: #0f172a;
+        --vibe-bg-end: #1e1b4b;
+        --vibe-surface: rgba(30, 41, 59, 0.6);
+        --vibe-border: rgba(148, 163, 184, 0.25);
+        --vibe-text: #e2e8f0;
+        --vibe-muted: #94a3b8;
+        --header-height: 72px;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        background: linear-gradient(
+          135deg,
+          var(--vibe-bg-start),
+          var(--vibe-bg-end)
+        );
+        color: var(--vibe-text);
+        min-height: 100vh;
+      }
+      .text-muted-2 {
+        color: var(--vibe-muted) !important;
+      }
+      .bg-dark-transparent {
+        background-color: rgba(0, 0, 0, 0.55);
+        backdrop-filter: saturate(120%) blur(6px);
+      }
+      .card-surface {
+        background-color: var(--vibe-surface) !important;
+        border-color: var(--vibe-border) !important;
+      }
+      .border-subtle {
+        border-color: var(--vibe-border) !important;
+      }
+      .btn.vibe-primary {
+        background-color: var(--vibe-primary);
+        color: #fff;
+        border: none;
+      }
+      .btn.vibe-primary:hover {
+        background-color: var(--vibe-primary-hover);
+        color: #fff;
+      }
+      .btn.vibe-gradient {
+        background-image: linear-gradient(
+          to right,
+          var(--vibe-primary),
+          var(--vibe-accent)
+        );
+        color: #fff;
+        border: none;
+      }
+      .btn.vibe-gradient:hover {
+        filter: brightness(1.08);
+      }
+      .btn-outline-light {
+        border-color: rgba(226, 232, 240, 0.6);
+        color: #fff;
+      }
+      .btn-outline-light:hover {
+        background-color: #fff !important;
+        color: #1e1b4b !important;
+      }
+      .navbar-dark .nav-link {
+        color: var(--vibe-text);
+        opacity: 0.9;
+      }
+      .navbar-dark .nav-link:hover {
+        opacity: 1;
+      }
+      .navbar-brand span.text-primary {
+        color: var(--vibe-accent) !important;
+      }
+      footer a {
+        color: var(--vibe-text);
+        opacity: 0.9;
+      }
+      footer a:hover {
+        opacity: 1;
+      }
+
+      .stat-card {
+        background: linear-gradient(
+          135deg,
+          rgba(124, 58, 237, 0.2),
+          rgba(14, 165, 233, 0.15)
+        );
+        border: 1px solid var(--vibe-border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: transform 0.2s;
+      }
+      .stat-card:hover {
+        transform: translateY(-4px);
+      }
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(
+          to right,
+          var(--vibe-primary),
+          var(--vibe-accent)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .event-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .event-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      }
+      .badge-gradient {
+        background: linear-gradient(
+          to right,
+          var(--vibe-primary),
+          var(--vibe-accent)
+        );
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+      }
+      .table-dark {
+        background-color: rgba(15, 23, 42, 0.5);
+      }
+      .table-dark th {
+        border-color: var(--vibe-border);
+        color: var(--vibe-accent);
+      }
+      .table-dark td {
+        border-color: var(--vibe-border);
+        color: var(--vibe-text);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="min-vh-100 d-flex flex-column">
+      <header
+        class="sticky-top bg-dark-transparent border-bottom border-subtle"
+      >
+        <div class="container px-4 px-sm-3 px-lg-4">
+          <nav class="navbar navbar-expand-md navbar-dark">
+            <div class="container-fluid">
+              <a
+                href="index.html"
+                class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none"
+              >
+                <span class="fs-3 fw-bold"
+                  >Vibe<span class="text-primary">.io</span></span
+                >
+                <span class="ms-2 text-muted-2 small d-none d-sm-inline"
+                  >Student Dev Community</span
+                >
+              </a>
+              <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+              >
+                <i data-lucide="menu"></i>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                  <li class="nav-item">
+                    <a href="about.html" class="nav-link">About</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="events.html" class="nav-link">Events</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="projects.html" class="nav-link">Projects</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="apply-ambassador.html" class="nav-link"
+                      >Ambassadors</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a href="contact.html" class="nav-link">Contact</a>
+                  </li>
+                </ul>
+                <div class="ms-auto d-flex gap-3">
+                  <a
+                    href="login.html"
+                    class="btn btn-outline-light d-none d-sm-flex align-items-center"
+                    >Login</a
+                  >
+                  <a href="signup.html" class="btn vibe-gradient"
+                    >Join for Free</a
+                  >
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main class="flex-grow-1 py-5">
+        <div class="container">
+          <!-- Header -->
+          <div class="row mb-4">
+            <div class="col">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <i
+                  data-lucide="shield"
+                  class="text-primary"
+                  style="width: 32px; height: 32px"
+                ></i>
+                <h1 class="h2 fw-bold mb-0">Ambassador Dashboard</h1>
+              </div>
+              <p class="text-muted-2">
+                Manage your events and view registered teams
+              </p>
+            </div>
+          </div>
+
+          <!-- Statistics Cards -->
+          <div class="row g-4 mb-5">
+            <div class="col-md-4">
+              <div class="stat-card text-center">
+                <div class="stat-number" id="totalEvents">0</div>
+                <div class="text-muted-2 fw-semibold">Total Events</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card text-center">
+                <div class="stat-number" id="totalRegistrations">0</div>
+                <div class="text-muted-2 fw-semibold">Total Registrations</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card text-center">
+                <div class="stat-number" id="totalParticipants">0</div>
+                <div class="text-muted-2 fw-semibold">Total Participants</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Events List -->
+          <div class="row">
+            <div class="col">
+              <div
+                class="d-flex justify-content-between align-items-center mb-4"
+              >
+                <h3 class="h4 fw-bold">Your Events</h3>
+                <button id="createEventBtn" class="btn vibe-primary">
+                  <i data-lucide="plus" style="width: 16px; height: 16px"></i>
+                  Create New Event
+                </button>
+              </div>
+
+              <div id="eventsList">
+                <div class="text-center py-5">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <p class="text-muted-2 mt-3">Loading your events...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="border-top border-subtle mt-4">
+        <div class="container py-4">
+          <div class="row align-items-center">
+            <div class="col-md-6 d-flex align-items-center gap-3">
+              <div class="text-white fw-bold">
+                <a href="index.html" style="text-decoration: none">Vibe.io</a>
+              </div>
+              <nav class="d-flex gap-3">
+                <a href="about.html" class="small text-decoration-none"
+                  >About</a
+                >
+                <a href="guidelines.html" class="small text-decoration-none"
+                  >Guidelines</a
+                >
+                <a href="contact.html" class="small text-decoration-none"
+                  >Contact</a
+                >
+              </nav>
+            </div>
+            <div
+              class="col-md-6 mt-3 mt-md-0 d-flex align-items-center gap-3 justify-content-md-end"
+            >
+              <a href="#" class="p-2 rounded"><i data-lucide="github"></i></a>
+              <a href="#" class="p-2 rounded"><i data-lucide="twitter"></i></a>
+              <a href="#" class="p-2 rounded"><i data-lucide="linkedin"></i></a>
+              <div class="small text-muted-2">
+                © 2025 Vibe.io - Built by students, for students.
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Team Details Modal -->
+    <div
+      class="modal fade"
+      id="teamDetailsModal"
+      tabindex="-1"
+      aria-labelledby="teamDetailsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+          <div class="modal-header border-subtle">
+            <h5 class="modal-title" id="teamDetailsModalLabel">
+              <i data-lucide="users" style="width: 20px; height: 20px"></i>
+              Registered Teams
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="teamsContent">
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="deleteConfirmModal"
+      tabindex="-1"
+      aria-labelledby="deleteConfirmModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+          <div class="modal-header border-subtle">
+            <h5 class="modal-title" id="deleteConfirmModalLabel">
+              <i
+                data-lucide="alert-triangle"
+                style="width: 20px; height: 20px"
+                class="text-warning"
+              ></i>
+              Confirm Delete
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete this event?</p>
+            <p class="text-warning small">
+              <strong>Warning:</strong> This will also delete all team
+              registrations and project submissions for this event. This action
+              cannot be undone.
+            </p>
+            <p class="text-white fw-bold" id="deleteEventTitle"></p>
+          </div>
+          <div class="modal-footer border-subtle">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+              Delete Event
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Creation Modal -->
+    <div
+      class="modal fade"
+      id="eventModal"
+      tabindex="-1"
+      aria-labelledby="eventModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+          <form id="eventForm">
+            <div class="modal-header border-subtle">
+              <h5 class="modal-title" id="eventModalLabel">
+                <i
+                  data-lucide="calendar-plus"
+                  style="width: 20px; height: 20px"
+                ></i>
+                Create New Event
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="eventTitle" class="form-label">Event Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="eventTitle"
+                  name="title"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="eventDescription" class="form-label"
+                  >Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="eventDescription"
+                  name="description"
+                  rows="3"
+                  placeholder="Describe your event..."
+                ></textarea>
+              </div>
+              <div class="mb-3 row">
+                <div class="col">
+                  <label for="minTeam" class="form-label">Min Team Size</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="minTeam"
+                    name="min_team_size"
+                    min="1"
+                    value="1"
+                    required
+                  />
+                </div>
+                <div class="col">
+                  <label for="maxTeam" class="form-label">Max Team Size</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="maxTeam"
+                    name="max_team_size"
+                    min="1"
+                    value="4"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="eventRules" class="form-label"
+                  >Rules & Guidelines</label
+                >
+                <textarea
+                  class="form-control"
+                  id="eventRules"
+                  name="rules"
+                  rows="3"
+                  placeholder="List the event rules and guidelines..."
+                ></textarea>
+              </div>
+            </div>
+            <div class="modal-footer border-subtle">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn vibe-primary">
+                <i data-lucide="check" style="width: 16px; height: 16px"></i>
+                Create Event
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== "undefined") lucide.createIcons();
+      });
+    </script>
+    <script src="assets/js/auth-nav.js"></script>
+    <script>
+      const SUPABASE_URL = "https://poekchmrknttynedwpwm.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA";
+
+      let supabaseClient;
+
+      // Check authentication and ambassador status
+      async function checkAuth() {
+        const authRaw = localStorage.getItem("vibe_logged_in");
+        if (!authRaw) {
+          alert("You must be logged in to access this page.");
+          window.location.href = "login.html";
+          return null;
+        }
+
+        const auth = JSON.parse(authRaw);
+        if (!auth.id) {
+          alert("Invalid authentication. Please log in again.");
+          window.location.href = "login.html";
+          return null;
+        }
+
+        // Check if user is an ambassador
+        const { data: profile, error } = await supabaseClient
+          .from("profiles")
+          .select("id, ambassador, full_name, college")
+          .eq("id", auth.id)
+          .single();
+
+        if (error || !profile || !profile.ambassador) {
+          alert("Access denied. This page is only for ambassadors.");
+          window.location.href = "index.html";
+          return null;
+        }
+
+        return auth;
+      }
+
+      // Load dashboard data
+      async function loadDashboard() {
+        const auth = await checkAuth();
+        if (!auth) return;
+
+        console.log("Loading dashboard for user:", auth.id);
+        console.log("Full auth object:", auth);
+
+        // Fetch ALL events first to debug
+        const { data: allEvents } = await supabaseClient
+          .from("events")
+          .select("id, title, created_by");
+        console.log("ALL events in database:", allEvents);
+
+        // Fetch events created by this ambassador
+        // Note: This will only show events where created_by matches the ambassador's ID
+        const { data: events, error: eventsError } = await supabaseClient
+          .from("events")
+          .select("*")
+          .eq("created_by", auth.id)
+          .order("created_at", { ascending: false });
+
+        console.log("Filtered events for this ambassador:", events);
+        console.log("Error (if any):", eventsError);
+
+        if (eventsError) {
+          console.error("Error fetching events:", eventsError);
+          document.getElementById("eventsList").innerHTML =
+            '<p class="text-danger">Error loading events.</p>';
+          return;
+        }
+
+        if (!events || events.length === 0) {
+          document.getElementById("eventsList").innerHTML = `
+          <div class="card card-surface text-center py-5">
+            <div class="card-body">
+              <i data-lucide="calendar-x" style="width: 48px; height: 48px;" class="text-muted-2 mb-3"></i>
+              <h5 class="text-muted-2">No Events Yet</h5>
+              <p class="text-muted-2 small">Create your first event to start managing registrations.</p>
+              <a href="events.html" class="btn vibe-primary mt-3">Create Event</a>
+            </div>
+          </div>
+        `;
+          if (typeof lucide !== "undefined") lucide.createIcons();
+          return;
+        }
+
+        // Fetch all registrations for these events
+        const eventIds = events.map((e) => e.id);
+        const { data: registrations, error: regError } = await supabaseClient
+          .from("registrations")
+          .select("*")
+          .in("event_id", eventIds);
+
+        if (regError) {
+          console.error("Error fetching registrations:", regError);
+        }
+
+        // Calculate statistics
+        const totalEvents = events.length;
+        const totalRegistrations = registrations ? registrations.length : 0;
+        let totalParticipants = 0;
+
+        if (registrations) {
+          registrations.forEach((reg) => {
+            // Count team lead + members
+            totalParticipants += 1; // team lead
+            if (Array.isArray(reg.members)) {
+              totalParticipants += reg.members.length;
+            }
+          });
+        }
+
+        // Update statistics
+        document.getElementById("totalEvents").textContent = totalEvents;
+        document.getElementById("totalRegistrations").textContent =
+          totalRegistrations;
+        document.getElementById("totalParticipants").textContent =
+          totalParticipants;
+
+        // Group registrations by event
+        const regsByEvent = {};
+        if (registrations) {
+          registrations.forEach((reg) => {
+            if (!regsByEvent[reg.event_id]) {
+              regsByEvent[reg.event_id] = [];
+            }
+            regsByEvent[reg.event_id].push(reg);
+          });
+        }
+
+        // Render events
+        let html = "";
+        events.forEach((event) => {
+          const eventRegs = regsByEvent[event.id] || [];
+          const teamCount = eventRegs.length;
+          let participantCount = 0;
+          eventRegs.forEach((reg) => {
+            participantCount += 1; // team lead
+            if (Array.isArray(reg.members)) {
+              participantCount += reg.members.length;
+            }
+          });
+
+          html += `
+          <div class="card card-surface mb-4 event-card">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <h5 class="card-title text-white mb-2">${event.title}</h5>
+                  <p class="text-muted-2 small mb-3">${
+                    event.description || "No description"
+                  }</p>
+                  <div class="d-flex gap-3 flex-wrap mb-2">
+                    <span class="badge bg-secondary">Team Size: ${
+                      event.min_team_size
+                    }-${event.max_team_size}</span>
+                    <span class="badge badge-gradient">${teamCount} Teams</span>
+                    <span class="badge bg-info">${participantCount} Participants</span>
+                  </div>
+                  ${
+                    event.rules
+                      ? `<div class="small text-muted-2"><strong>Rules:</strong> ${event.rules}</div>`
+                      : ""
+                  }
+                </div>
+                <div class="col-md-4 mt-3 mt-md-0">
+                  <div class="d-flex flex-column flex-sm-row gap-2 justify-content-md-end">
+                    <button class="btn vibe-primary view-teams-btn d-flex align-items-center justify-content-center gap-1" data-event-id="${
+                      event.id
+                    }" data-event-title="${event.title}" ${
+            teamCount === 0 ? "disabled" : ""
+          }>
+                      <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+                      <span>View Teams</span>
+                    </button>
+                    <button class="btn btn-danger delete-event-btn d-flex align-items-center justify-content-center gap-1" data-event-id="${
+                      event.id
+                    }" data-event-title="${event.title}" title="Delete Event">
+                      <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                      <span class="d-none d-sm-inline">Delete</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        });
+
+        document.getElementById("eventsList").innerHTML = html;
+        if (typeof lucide !== "undefined") lucide.createIcons();
+
+        // Attach event listeners to view buttons
+        document.querySelectorAll(".view-teams-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const eventId = this.getAttribute("data-event-id");
+            const eventTitle = this.getAttribute("data-event-title");
+            showTeamDetails(eventId, eventTitle, regsByEvent[eventId] || []);
+          });
+        });
+
+        // Attach event listeners to delete buttons
+        document.querySelectorAll(".delete-event-btn").forEach((btn) => {
+          btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("Delete button clicked");
+            const eventId = this.getAttribute("data-event-id");
+            const eventTitle = this.getAttribute("data-event-title");
+            console.log("Event to delete:", eventId, eventTitle);
+            showDeleteConfirmation(eventId, eventTitle);
+          });
+        });
+      }
+
+      // Show delete confirmation modal
+      function showDeleteConfirmation(eventId, eventTitle) {
+        console.log("showDeleteConfirmation called with:", eventId, eventTitle);
+
+        // Check if Bootstrap is loaded
+        if (typeof bootstrap === "undefined") {
+          console.error("Bootstrap is not loaded!");
+          // Fallback to confirm dialog
+          if (
+            confirm(
+              `Are you sure you want to delete "${eventTitle}"?\n\nThis will also delete all team registrations and project submissions. This action cannot be undone.`
+            )
+          ) {
+            deleteEvent(eventId, eventTitle);
+          }
+          return;
+        }
+
+        const titleElement = document.getElementById("deleteEventTitle");
+        if (!titleElement) {
+          console.error("deleteEventTitle element not found!");
+          return;
+        }
+        titleElement.textContent = eventTitle;
+
+        const modalElement = document.getElementById("deleteConfirmModal");
+        if (!modalElement) {
+          console.error("deleteConfirmModal element not found!");
+          return;
+        }
+
+        console.log("Creating modal...");
+        try {
+          const modal = new bootstrap.Modal(modalElement);
+          modal.show();
+          console.log("Modal shown successfully");
+
+          // Set up the confirm button
+          const confirmBtn = document.getElementById("confirmDeleteBtn");
+          if (!confirmBtn) {
+            console.error("confirmDeleteBtn not found!");
+            return;
+          }
+
+          // Remove previous event listeners by cloning the button
+          const newConfirmBtn = confirmBtn.cloneNode(true);
+          confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+          newConfirmBtn.addEventListener("click", async () => {
+            console.log("Confirm delete clicked");
+            // Hide modal first
+            modal.hide();
+            // Wait a bit for modal to close
+            setTimeout(async () => {
+              await deleteEvent(eventId, eventTitle);
+            }, 300);
+          });
+
+          if (typeof lucide !== "undefined") lucide.createIcons();
+        } catch (error) {
+          console.error("Error showing modal:", error);
+          // Fallback to confirm dialog
+          if (
+            confirm(
+              `Are you sure you want to delete "${eventTitle}"?\n\nThis will also delete all team registrations and project submissions. This action cannot be undone.`
+            )
+          ) {
+            deleteEvent(eventId, eventTitle);
+          }
+        }
+      }
+
+      // Delete event and all associated registrations
+      async function deleteEvent(eventId, eventTitle) {
+        try {
+          console.log("Starting deletion process for event:", eventId);
+
+          // First, delete all registrations for this event
+          const { data: regData, error: regError } = await supabaseClient
+            .from("registrations")
+            .delete()
+            .eq("event_id", eventId)
+            .select();
+
+          console.log(
+            "Registrations delete result:",
+            regData,
+            "Error:",
+            regError
+          );
+
+          if (regError && regError.code !== "PGRST116") {
+            // PGRST116 means no rows found, which is OK
+            console.error("Error deleting registrations:", regError);
+            alert("Error deleting event registrations: " + regError.message);
+            return;
+          }
+
+          // Then delete the event itself
+          const { data: eventData, error: eventError } = await supabaseClient
+            .from("events")
+            .delete()
+            .eq("id", eventId)
+            .select();
+
+          console.log("Event delete result:", eventData, "Error:", eventError);
+
+          if (eventError) {
+            console.error("Error deleting event:", eventError);
+            alert("Error deleting event: " + eventError.message);
+            return;
+          }
+
+          if (!eventData || eventData.length === 0) {
+            console.error(
+              "No event was deleted - RLS policy blocking deletion"
+            );
+            alert(
+              "Failed to delete event due to database permissions.\n\nDatabase administrator needs to add RLS policies:\n\n1. Allow DELETE on events table where created_by = auth.uid()\n2. Allow DELETE on registrations table where event_id matches an event created by the user\n\nPlease contact your database administrator."
+            );
+            return;
+          }
+
+          console.log("Event deleted successfully, reloading dashboard...");
+          // Reload the dashboard
+          await loadDashboard();
+          alert(`Event "${eventTitle}" has been successfully deleted.`);
+        } catch (error) {
+          console.error("Unexpected error:", error);
+          alert("An unexpected error occurred while deleting the event.");
+        }
+      }
+
+      // Show team details in modal
+      async function showTeamDetails(eventId, eventTitle, registrations) {
+        document.getElementById("teamDetailsModalLabel").innerHTML = `
+        <i data-lucide="users" style="width: 20px; height: 20px;"></i>
+        ${eventTitle} - Registered Teams
+      `;
+
+        if (registrations.length === 0) {
+          document.getElementById("teamsContent").innerHTML =
+            '<p class="text-muted-2 text-center">No teams registered yet.</p>';
+        } else {
+          // Team lead is now stored as email (first member)
+          // Try to fetch profiles by email for additional info
+          const teamLeadEmails = registrations
+            .map((r) => r.team_lead)
+            .filter((email) => email);
+          const { data: profiles } = await supabaseClient
+            .from("profiles")
+            .select("id, full_name, email")
+            .in("email", teamLeadEmails);
+
+          const profileMap = {};
+          if (profiles) {
+            profiles.forEach((p) => {
+              profileMap[p.email.toLowerCase()] = p;
+            });
+          }
+
+          let html = "";
+          registrations.forEach((reg, index) => {
+            // team_lead is the email, team_lead_name is the name
+            const teamLeadEmail = reg.team_lead || "N/A";
+            const teamLeadName =
+              reg.team_lead_name ||
+              (profileMap[teamLeadEmail.toLowerCase()]
+                ? profileMap[teamLeadEmail.toLowerCase()].full_name
+                : null) ||
+              teamLeadEmail.split("@")[0];
+            const memberCount = Array.isArray(reg.members)
+              ? reg.members.length
+              : 0;
+            const registeredDate = reg.created_at
+              ? new Date(reg.created_at).toLocaleDateString()
+              : "N/A";
+
+            html += `
+            <div class="card card-surface mb-3">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <h6 class="text-white fw-bold mb-1">
+                      <i data-lucide="award" style="width: 16px; height: 16px;"></i>
+                      ${reg.team_name}
+                    </h6>
+                    <small class="text-muted-2">Registered on ${registeredDate}</small>
+                  </div>
+                  ${
+                    reg.project_link
+                      ? `<span class="badge bg-success">Project Submitted</span>`
+                      : `<span class="badge bg-warning">No Project Link</span>`
+                  }
+                </div>
+                
+                <div class="mb-3">
+                  <strong class="text-primary small">Team Lead:</strong>
+                  <div class="ms-3 mt-1">
+                    <div class="text-white">${teamLeadName}</div>
+                    <div class="text-muted-2 small">${teamLeadEmail}</div>
+                  </div>
+                </div>
+
+                ${
+                  memberCount > 0
+                    ? `
+                  <div class="mb-3">
+                    <strong class="text-primary small">Team Members (${memberCount}):</strong>
+                    <div class="table-responsive mt-2">
+                      <table class="table table-dark table-sm">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          ${reg.members
+                            .map(
+                              (m) => `
+                            <tr>
+                              <td>${m.name}</td>
+                              <td>${m.email}</td>
+                            </tr>
+                          `
+                            )
+                            .join("")}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                `
+                    : '<p class="text-muted-2 small ms-3">No additional members</p>'
+                }
+
+                ${
+                  reg.project_link
+                    ? `
+                  <div class="mt-3 pt-3 border-top border-subtle">
+                    <strong class="text-primary small">Project Link:</strong>
+                    <div class="mt-1">
+                      <a href="${
+                        reg.project_link
+                      }" target="_blank" class="text-info">${
+                        reg.project_link
+                      }</a>
+                    </div>
+                    ${
+                      reg.link_uploaded_at
+                        ? `<small class="text-muted-2">Submitted on ${new Date(
+                            reg.link_uploaded_at
+                          ).toLocaleDateString()}</small>`
+                        : ""
+                    }
+                  </div>
+                `
+                    : ""
+                }
+              </div>
+            </div>
+          `;
+          });
+
+          document.getElementById("teamsContent").innerHTML = html;
+        }
+
+        if (typeof lucide !== "undefined") lucide.createIcons();
+        const modal = new bootstrap.Modal(
+          document.getElementById("teamDetailsModal")
+        );
+        modal.show();
+      }
+
+      // Handle Create Event button click
+      function setupCreateEventButton() {
+        const createBtn = document.getElementById("createEventBtn");
+        if (createBtn) {
+          createBtn.addEventListener("click", () => {
+            const modal = new bootstrap.Modal(
+              document.getElementById("eventModal")
+            );
+            modal.show();
+            if (typeof lucide !== "undefined") lucide.createIcons();
+          });
+        }
+      }
+
+      // Handle event form submission
+      function setupEventFormHandler() {
+        const form = document.getElementById("eventForm");
+        if (form) {
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const authRaw = localStorage.getItem("vibe_logged_in");
+            const auth = authRaw ? JSON.parse(authRaw) : null;
+
+            if (!auth || !auth.id) {
+              alert("You must be logged in to create an event.");
+              return;
+            }
+
+            const data = {
+              title: form.title.value,
+              description: form.description.value,
+              min_team_size: parseInt(form.min_team_size.value, 10),
+              max_team_size: parseInt(form.max_team_size.value, 10),
+              rules: form.rules.value,
+              created_by: auth.id,
+            };
+
+            // Validate team sizes
+            if (data.max_team_size < data.min_team_size) {
+              alert(
+                "Maximum team size must be greater than or equal to minimum team size."
+              );
+              return;
+            }
+
+            const { error } = await supabaseClient
+              .from("events")
+              .insert([data]);
+
+            if (error) {
+              console.error("Error creating event:", error);
+              alert("Error creating event: " + error.message);
+            } else {
+              // Close modal and reset form
+              bootstrap.Modal.getInstance(
+                document.getElementById("eventModal")
+              ).hide();
+              form.reset();
+              alert("Event created successfully!");
+              // Reload the dashboard
+              await loadDashboard();
+            }
+          });
+        }
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (!window.supabase || typeof supabase.createClient !== "function") {
+          alert("Error loading required libraries. Please refresh the page.");
+          return;
+        }
+
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        setupCreateEventButton();
+        setupEventFormHandler();
+        await loadDashboard();
+      });
+    </script>
+  </body>
+</html>

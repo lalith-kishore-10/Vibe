@@ -1,304 +1,444 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" class="dark">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Projects — Vibe.io</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
-  <style>
-    body {
-      background: linear-gradient(135deg, #0f172a, #1e1b4b);
-      color: #e2e8f0;
-      font-family: 'Inter', sans-serif;
-    }
-    .container {
-      max-width: 1200px;
-    }
-    .section-title {
-      color: #b0bfc5;
-      font-weight: 600;
-      margin-bottom: 0.2rem;
-      letter-spacing: 0.5px;
-    }
-    /* Sidebar styles */
-    .sidebar {
-      position: sticky;
-      top: 90px;
-    }
-    /* Card styles */
-    .card {
-      background: rgba(30,41,59,0.7);
-      border: 1px solid rgba(148,163,184,0.25);
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-      min-height: 220px;
-    }
-    .card .card-title {
-      color: #7c3aed;
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-    .card .card-text {
-      color: #94a3b8;
-      font-size: 0.98rem;
-    }
-    /* Table styles */
-    .table-vibe {
-      background: rgba(30,41,59,0.6);
-      border: 1px solid rgba(148,163,184,0.25);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .table-vibe th {
-      background: #1e1b4b;
-      color: #0ea5e9;
-      font-weight: 700;
-      border-bottom: 2px solid #7c3aed;
-      font-size: 1rem;
-      text-align: center;
-    }
-    .table-vibe td {
-      color: #e2e8f0;
-      background: transparent;
-      text-align: center;
-      vertical-align: middle;
-      border-color: rgba(148,163,184,0.18);
-      font-size: 0.97rem;
-      padding: 0.55rem 0.5rem;
-    }
-    .table-vibe .rank {
-      font-weight: bold;
-      color: #7c3aed;
-      font-size: 1.05rem;
-    }
-    .table-vibe .project {
-      color: #fff;
-      font-weight: 600;
-    }
-    .table-vibe .metric {
-      color: #94a3b8;
-    }
-    .table-vibe .btn {
-      padding: 0.25rem 0.8rem;
-      font-size: 0.95rem;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-    /* Main showcase grid */
-    .showcase-grid .card {
-      transition: box-shadow 0.2s;
-    }
-    .showcase-grid .card:hover {
-      box-shadow: 0 8px 32px rgba(124,58,237,0.18);
-      border-color: #7c3aed;
-    }
-    /* Responsive adjustments */
-    @media (max-width: 991px) {
-      .sidebar {
-        position: static;
-        margin-top: 2rem;
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Projects — Vibe.io</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+    <style>
+      body {
+        background: linear-gradient(135deg, #0f172a, #1e1b4b);
+        color: #e2e8f0;
+        font-family: "Inter", sans-serif;
       }
-    }
-    @media (max-width: 767px) {
       .container {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        max-width: 1200px;
       }
       .section-title {
+        color: #b0bfc5;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+        letter-spacing: 0.5px;
+      }
+      /* Sidebar styles */
+      .sidebar {
+        position: sticky;
+        top: 90px;
+      }
+      /* Card styles */
+      .card {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+        min-height: 220px;
+      }
+      .card .card-title {
+        color: #7c3aed;
+        font-weight: 700;
         font-size: 1.1rem;
+      }
+      .card .card-text {
+        color: #94a3b8;
+        font-size: 0.98rem;
+      }
+      /* Table styles */
+      .table-vibe {
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .table-vibe th {
+        background: #1e1b4b;
+        color: #0ea5e9;
+        font-weight: 700;
+        border-bottom: 2px solid #7c3aed;
+        font-size: 1rem;
         text-align: center;
       }
-    }
-    /* ========= THEME ========= */
-    :root {
-      --vibe-primary: #7c3aed;      /* Violet */
-      --vibe-primary-hover: #6d28d9;  /* Deeper violet */
-      --vibe-accent: #0ea5e9;        /* Cyan accent */
-      --vibe-bg-start: #0f172a;      /* Navy */
-      --vibe-bg-end: #1e1b4b;        /* Indigo */
-      --vibe-surface: rgba(30, 41, 59, 0.6); /* Card surface on dark */
-      --vibe-border: rgba(148, 163, 184, 0.25);
-      --vibe-text: #e2e8f0;
-      --vibe-muted: #94a3b8;
-      --header-height: 72px;
-    }
+      .table-vibe td {
+        color: #e2e8f0;
+        background: transparent;
+        text-align: center;
+        vertical-align: middle;
+        border-color: rgba(148, 163, 184, 0.18);
+        font-size: 0.97rem;
+        padding: 0.55rem 0.5rem;
+      }
+      .table-vibe .rank {
+        font-weight: bold;
+        color: #7c3aed;
+        font-size: 1.05rem;
+      }
+      .table-vibe .project {
+        color: #fff;
+        font-weight: 600;
+      }
+      .table-vibe .metric {
+        color: #94a3b8;
+      }
+      .table-vibe .btn {
+        padding: 0.25rem 0.8rem;
+        font-size: 0.95rem;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      /* Main showcase grid */
+      .showcase-grid .card {
+        transition: box-shadow 0.2s;
+      }
+      .showcase-grid .card:hover {
+        box-shadow: 0 8px 32px rgba(124, 58, 237, 0.18);
+        border-color: #7c3aed;
+      }
+      /* Responsive adjustments */
+      @media (max-width: 991px) {
+        .sidebar {
+          position: static;
+          margin-top: 2rem;
+        }
+      }
+      @media (max-width: 767px) {
+        .container {
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+        .section-title {
+          font-size: 1.1rem;
+          text-align: center;
+        }
+      }
+      /* ========= THEME ========= */
+      :root {
+        --vibe-primary: #7c3aed; /* Violet */
+        --vibe-primary-hover: #6d28d9; /* Deeper violet */
+        --vibe-accent: #0ea5e9; /* Cyan accent */
+        --vibe-bg-start: #0f172a; /* Navy */
+        --vibe-bg-end: #1e1b4b; /* Indigo */
+        --vibe-surface: rgba(30, 41, 59, 0.6); /* Card surface on dark */
+        --vibe-border: rgba(148, 163, 184, 0.25);
+        --vibe-text: #e2e8f0;
+        --vibe-muted: #94a3b8;
+        --header-height: 72px;
+      }
 
-    /* Global */
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      background: linear-gradient(135deg, var(--vibe-bg-start), var(--vibe-bg-end));
-      color: var(--vibe-text);
-    }
+      /* Global */
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        background: linear-gradient(
+          135deg,
+          var(--vibe-bg-start),
+          var(--vibe-bg-end)
+        );
+        color: var(--vibe-text);
+      }
 
-    /* Utility/theme helpers */
-    .text-muted-2 { color: var(--vibe-muted) !important; }
-    .bg-dark-transparent { background-color: rgba(0, 0, 0, 0.55); backdrop-filter: saturate(120%) blur(6px); }
-    .card-surface { background-color: var(--vibe-surface) !important; border-color: var(--vibe-border) !important; }
-    .border-subtle { border-color: var(--vibe-border) !important; }
+      /* Utility/theme helpers */
+      .text-muted-2 {
+        color: var(--vibe-muted) !important;
+      }
+      .bg-dark-transparent {
+        background-color: rgba(0, 0, 0, 0.55);
+        backdrop-filter: saturate(120%) blur(6px);
+      }
+      .card-surface {
+        background-color: var(--vibe-surface) !important;
+        border-color: var(--vibe-border) !important;
+      }
+      .border-subtle {
+        border-color: var(--vibe-border) !important;
+      }
 
-    /* Buttons */
-    .btn.vibe-primary { background-color: var(--vibe-primary); color: #fff; border: none; }
-    .btn.vibe-primary:hover { background-color: var(--vibe-primary-hover); color: #fff; }
-    .btn.vibe-gradient {
-      background-image: linear-gradient(to right, var(--vibe-primary), var(--vibe-accent));
-      color: #fff; border: none;
-    }
-    .btn.vibe-gradient:hover { filter: brightness(1.08); }
-    .btn-outline-light { border-color: rgba(226,232,240,0.6); color: #fff; }
-    .btn-outline-light:hover { background-color: #fff !important; color: #1e1b4b !important; }
+      /* Buttons */
+      .btn.vibe-primary {
+        background-color: var(--vibe-primary);
+        color: #fff;
+        border: none;
+      }
+      .btn.vibe-primary:hover {
+        background-color: var(--vibe-primary-hover);
+        color: #fff;
+      }
+      .btn.vibe-gradient {
+        background-image: linear-gradient(
+          to right,
+          var(--vibe-primary),
+          var(--vibe-accent)
+        );
+        color: #fff;
+        border: none;
+      }
+      .btn.vibe-gradient:hover {
+        filter: brightness(1.08);
+      }
+      .btn-outline-light {
+        border-color: rgba(226, 232, 240, 0.6);
+        color: #fff;
+      }
+      .btn-outline-light:hover {
+        background-color: #fff !important;
+        color: #1e1b4b !important;
+      }
 
-    /* Focus styles (keyboard a11y) */
-    .btn:focus-visible, .nav-link:focus-visible, a.btn:focus-visible {
-      outline: 3px solid var(--vibe-accent); outline-offset: 2px;
-    }
+      /* Focus styles (keyboard a11y) */
+      .btn:focus-visible,
+      .nav-link:focus-visible,
+      a.btn:focus-visible {
+        outline: 3px solid var(--vibe-accent);
+        outline-offset: 2px;
+      }
 
-    /* Navbar */
-    .navbar-dark .nav-link { color: var(--vibe-text); opacity: 0.9; }
-    .navbar-dark .nav-link:hover { opacity: 1; }
-    .navbar-brand span.text-primary { color: var(--vibe-accent) !important; }
-  /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
-    .navbar-toggler {
-      color: var(--vibe-text) !important;
-      border: none !important;
-      background: rgba(124,58,237,0.15) !important;
-      box-shadow: 0 0 0 2px var(--vibe-primary);
-    }
-    .navbar-toggler:focus {
-      outline: 2px solid var(--vibe-accent);
-      background: rgba(124,58,237,0.25) !important;
-    }
-    .navbar-toggler i, .navbar-toggler svg {
-      color: var(--vibe-text) !important;
-      width: 1.25rem;
-      height: 1.25rem;
-      stroke-width: 1.5;
-    }
+      /* Navbar */
+      .navbar-dark .nav-link {
+        color: var(--vibe-text);
+        opacity: 0.9;
+      }
+      .navbar-dark .nav-link:hover {
+        opacity: 1;
+      }
+      .navbar-brand span.text-primary {
+        color: var(--vibe-accent) !important;
+      }
+      /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
+      .navbar-toggler {
+        color: var(--vibe-text) !important;
+        border: none !important;
+        background: rgba(124, 58, 237, 0.15) !important;
+        box-shadow: 0 0 0 2px var(--vibe-primary);
+      }
+      .navbar-toggler:focus {
+        outline: 2px solid var(--vibe-accent);
+        background: rgba(124, 58, 237, 0.25) !important;
+      }
+      .navbar-toggler i,
+      .navbar-toggler svg {
+        color: var(--vibe-text) !important;
+        width: 1.25rem;
+        height: 1.25rem;
+        stroke-width: 1.5;
+      }
 
-    /* Hero decorative blobs (brighter for contrast) */
-    .decor-blob-1 {
-      left: -8rem; top: -10rem; width: 24rem; height: 24rem;
-      background: radial-gradient(closest-side, rgba(124,58,237,0.28), rgba(14,165,233,0.12) 70%, transparent);
-      filter: blur(70px);
-    }
-    .decor-blob-2 {
-      right: -6rem; bottom: -10rem; width: 36rem; height: 36rem;
-      background: radial-gradient(closest-side, rgba(14,165,233,0.22), rgba(124,58,237,0.12) 70%, transparent);
-      filter: blur(70px);
-    }
+      /* Hero decorative blobs (brighter for contrast) */
+      .decor-blob-1 {
+        left: -8rem;
+        top: -10rem;
+        width: 24rem;
+        height: 24rem;
+        background: radial-gradient(
+          closest-side,
+          rgba(124, 58, 237, 0.28),
+          rgba(14, 165, 233, 0.12) 70%,
+          transparent
+        );
+        filter: blur(70px);
+      }
+      .decor-blob-2 {
+        right: -6rem;
+        bottom: -10rem;
+        width: 36rem;
+        height: 36rem;
+        background: radial-gradient(
+          closest-side,
+          rgba(14, 165, 233, 0.22),
+          rgba(124, 58, 237, 0.12) 70%,
+          transparent
+        );
+        filter: blur(70px);
+      }
 
-    /* Badges */
-    .badge-brand { background-color: var(--vibe-primary); color: #fff; }
-    .badge-accent { background-color: var(--vibe-accent); color: #0b1221; }
+      /* Badges */
+      .badge-brand {
+        background-color: var(--vibe-primary);
+        color: #fff;
+      }
+      .badge-accent {
+        background-color: var(--vibe-accent);
+        color: #0b1221;
+      }
 
-    /* Cards */
-    .card-header.chrome-dots .dot { width: 0.75rem; height: 0.75rem; }
-    .card-header.chrome-dots .dot.red { background:#ef4444; }
-    .card-header.chrome-dots .dot.yellow { background:#f59e0b; }
-    .card-header.chrome-dots .dot.green { background:#22c55e; }
+      /* Cards */
+      .card-header.chrome-dots .dot {
+        width: 0.75rem;
+        height: 0.75rem;
+      }
+      .card-header.chrome-dots .dot.red {
+        background: #ef4444;
+      }
+      .card-header.chrome-dots .dot.yellow {
+        background: #f59e0b;
+      }
+      .card-header.chrome-dots .dot.green {
+        background: #22c55e;
+      }
 
-    /* Code snippet */
-    pre code { white-space: pre; }
+      /* Code snippet */
+      pre code {
+        white-space: pre;
+      }
 
-    /* Gradient card (ambassadors section fix for Tailwind-like classes) */
-    .card-brand-gradient {
-      background: linear-gradient(90deg, rgba(124,58,237,0.25), rgba(14,165,233,0.2));
-      border: 1px solid var(--vibe-border);
-    }
-    /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
-    .navbar-toggler, .navbar-toggler:focus { color: var(--vibe-text); border: none; }
-    .navbar-toggler i, .navbar-toggler svg { color: var(--vibe-text); width: 1.25rem; height: 1.25rem; stroke-width: 1.5; }
-    /* Footer */
-    footer a { color: var(--vibe-text); opacity: 0.9; }
-    footer a:hover { opacity: 1; }
-/* Styling for the always-open Discord button */
-.discord-fab-btn-open {
-  /* Positioning and size for the open state */
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 170px; /* The width needed to show the text */
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+      /* Gradient card (ambassadors section fix for Tailwind-like classes) */
+      .card-brand-gradient {
+        background: linear-gradient(
+          90deg,
+          rgba(124, 58, 237, 0.25),
+          rgba(14, 165, 233, 0.2)
+        );
+        border: 1px solid var(--vibe-border);
+      }
+      /* Ensure the hamburger (lucide) icon is visible on dark navbar backgrounds */
+      .navbar-toggler,
+      .navbar-toggler:focus {
+        color: var(--vibe-text);
+        border: none;
+      }
+      .navbar-toggler i,
+      .navbar-toggler svg {
+        color: var(--vibe-text);
+        width: 1.25rem;
+        height: 1.25rem;
+        stroke-width: 1.5;
+      }
+      /* Footer */
+      footer a {
+        color: var(--vibe-text);
+        opacity: 0.9;
+      }
+      footer a:hover {
+        opacity: 1;
+      }
+      /* Styling for the always-open Discord button */
+      .discord-fab-btn-open {
+        /* Positioning and size for the open state */
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 170px; /* The width needed to show the text */
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
 
-  /* Styling */
-  background: #5865F2; /* Discord's official color */
-  color: white;
-  border-radius: 50px; /* Pill shape */
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-  text-decoration: none;
-  z-index: 9999;
-  
-  /* Adds a subtle pulsing animation to draw attention */
-  animation: pulse-fab 2s infinite;
-}
+        /* Styling */
+        background: #5865f2; /* Discord's official color */
+        color: white;
+        border-radius: 50px; /* Pill shape */
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        cursor: pointer;
+        text-decoration: none;
+        z-index: 9999;
 
-/* Style for the SVG icon within the open button */
-.discord-fab-btn-open svg {
-  min-width: 24px;
-  height: 24px;
-  margin-right: 8px; /* Adds space between the icon and text */
-}
+        /* Adds a subtle pulsing animation to draw attention */
+        animation: pulse-fab 2s infinite;
+      }
 
-/* Style for the text label within the open button */
-.discord-fab-btn-open .discord-fab-label {
-  white-space: nowrap;
-  font-family: sans-serif;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 1;
-  opacity: 1; /* The text is always visible */
-  margin-left: 0;
-}
+      /* Style for the SVG icon within the open button */
+      .discord-fab-btn-open svg {
+        min-width: 24px;
+        height: 24px;
+        margin-right: 8px; /* Adds space between the icon and text */
+      }
 
-/* The pulsing animation */
-@keyframes pulse-fab {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.7);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 15px rgba(88, 101, 242, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(88, 101, 242, 0);
-  }
-}
-  </style>
-</head>
-<body>
-  <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
+      /* Style for the text label within the open button */
+      .discord-fab-btn-open .discord-fab-label {
+        white-space: nowrap;
+        font-family: sans-serif;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 1;
+        opacity: 1; /* The text is always visible */
+        margin-left: 0;
+      }
+
+      /* The pulsing animation */
+      @keyframes pulse-fab {
+        0% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.7);
+        }
+        70% {
+          transform: scale(1);
+          box-shadow: 0 0 0 15px rgba(88, 101, 242, 0);
+        }
+        100% {
+          transform: scale(0.95);
+          box-shadow: 0 0 0 0 rgba(88, 101, 242, 0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="sticky-top bg-dark-transparent border-bottom border-subtle">
       <div class="container px-4 px-sm-3 px-lg-4">
         <nav class="navbar navbar-expand-md navbar-dark">
           <div class="container-fluid">
-            <a href="index.html" class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none">
-              <span class="fs-3 fw-bold">Vibe<span class="text-primary">.io</span></span>
-              <span class="ms-2 text-muted-2 small d-none d-sm-inline">Student Dev Community</span>
+            <a
+              href="index.html"
+              class="navbar-brand d-flex align-items-baseline gap-2 text-white text-decoration-none"
+            >
+              <span class="fs-3 fw-bold"
+                >Vibe<span class="text-primary">.io</span></span
+              >
+              <span class="ms-2 text-muted-2 small d-none d-sm-inline"
+                >Student Dev Community</span
+              >
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
               <i data-lucide="menu"></i>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-                <li class="nav-item"><a href="events.html" class="nav-link">Events</a></li>
-                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
-                <li class="nav-item"><a href="apply-ambassador.html" class="nav-link">Ambassadors</a></li>
-                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="nav-item">
+                  <a href="about.html" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                  <a href="events.html" class="nav-link">Events</a>
+                </li>
+                <li class="nav-item">
+                  <a href="projects.html" class="nav-link">Projects</a>
+                </li>
+                <li class="nav-item">
+                  <a href="apply-ambassador.html" class="nav-link"
+                    >Ambassadors</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a href="contact.html" class="nav-link">Contact</a>
+                </li>
               </ul>
               <div class="ms-auto d-flex gap-3" id="nav-auth-area">
-                <a href="login.html" class="btn btn-outline-light d-none d-sm-flex align-items-center" id="nav-login">Login</a>
-                <a href="signup.html" class="btn vibe-gradient" id="nav-signup">Join for Free</a>
+                <a
+                  href="login.html"
+                  class="btn btn-outline-light d-none d-sm-flex align-items-center"
+                  id="nav-login"
+                  >Login</a
+                >
+                <a href="signup.html" class="btn vibe-gradient" id="nav-signup"
+                  >Join for Free</a
+                >
                 <!-- Logged-in state will be injected here -->
               </div>
             </div>
@@ -306,7 +446,7 @@
         </nav>
       </div>
     </header>
-    
+
     <div class="container py-5">
       <h1 class="mb-4 fw-bold">Projects Showcase</h1>
       <p class="card-text">Vote for the best project you see</p>
@@ -315,42 +455,143 @@
           <div class="card mb-4">
             <div class="card-body">
               <h2 class="section-title">Projects Uploaded</h2>
-              <table class="table table-vibe table-bordered mb-0" id="projects-table">
+              <table
+                class="table table-vibe table-bordered mb-0"
+                id="projects-table"
+              >
                 <thead>
-                  <tr><th>#</th><th>Project</th><th>Team</th><th>Event</th><th>View</th><th></th></tr>
+                  <tr>
+                    <th>#</th>
+                    <th>Team Name</th>
+                    <th>Project Name</th>
+                    <th>Project Description</th>
+                    <th>Event</th>
+                    <th>View Project</th>
+                    <th>View Team</th>
+                  </tr>
                 </thead>
                 <tbody>
                   <!-- Dynamic project rows will be injected here by assets/js/projects.js -->
                 </tbody>
               </table>
+              <!-- Team Details Modal -->
+              <div
+                class="modal fade"
+                id="teamDetailsModal"
+                tabindex="-1"
+                aria-labelledby="teamDetailsModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content bg-dark text-light">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="teamDetailsModalLabel">
+                        Team Details
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body" id="teamDetailsContent">
+                      <!-- Team details will be injected here -->
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <!-- Upload Project Modal -->
-              <div class="modal fade" id="uploadProjectModal" tabindex="-1" aria-labelledby="uploadProjectModalLabel" aria-hidden="true">
+              <div
+                class="modal fade"
+                id="uploadProjectModal"
+                tabindex="-1"
+                aria-labelledby="uploadProjectModalLabel"
+                aria-hidden="true"
+              >
                 <div class="modal-dialog">
                   <div class="modal-content bg-dark text-light">
                     <form id="uploadProjectForm">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="uploadProjectModalLabel">Upload Project</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="uploadProjectModalLabel">
+                          Upload Project
+                        </h5>
+                        <button
+                          type="button"
+                          class="btn-close btn-close-white"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
                       </div>
                       <div class="modal-body">
-                        <input type="hidden" id="uploadEventId" name="event_id">
-                        <input type="hidden" id="uploadRegistrationId" name="registration_id">
+                        <input
+                          type="hidden"
+                          id="uploadEventId"
+                          name="event_id"
+                        />
+                        <input
+                          type="hidden"
+                          id="uploadRegistrationId"
+                          name="registration_id"
+                        />
                         <div class="mb-3">
-                          <label for="projectTitle" class="form-label">Project Title</label>
-                          <input type="text" class="form-control" id="projectTitle" name="project_title" required>
+                          <label for="projectTitle" class="form-label"
+                            >Project Title</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="projectTitle"
+                            name="project_title"
+                            required
+                          />
                         </div>
                         <div class="mb-3">
-                          <label for="projectTheme" class="form-label">Theme / Track</label>
-                          <input type="text" class="form-control" id="projectTheme" name="theme" placeholder="Optional">
+                          <label for="projectTheme" class="form-label"
+                            >Theme / Track</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="projectTheme"
+                            name="theme"
+                            placeholder="Optional"
+                          />
                         </div>
                         <div class="mb-3">
-                          <label for="projectUrl" class="form-label">Project URL</label>
-                          <input type="url" class="form-control" id="projectUrl" name="project_url" required placeholder="https://github.com/yourproject">
+                          <label for="projectUrl" class="form-label"
+                            >Project URL</label
+                          >
+                          <input
+                            type="url"
+                            class="form-control"
+                            id="projectUrl"
+                            name="project_url"
+                            required
+                            placeholder="https://github.com/yourproject"
+                          />
                         </div>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn vibe-primary">Upload</button>
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal"
+                        >
+                          Cancel
+                        </button>
+                        <button type="submit" class="btn vibe-primary">
+                          Upload
+                        </button>
                       </div>
                     </form>
                   </div>
@@ -361,195 +602,256 @@
         </div>
       </div>
     </div>
-  <footer class="border-top border-subtle mt-4">
+    <footer class="border-top border-subtle mt-4">
       <div class="container py-4">
         <div class="row align-items-center">
           <div class="col-md-6 d-flex align-items-center gap-3">
-            <div class="text-white fw-bold"><a href="index.html" style="text-decoration: none;">Vibe.io</a></div>
+            <div class="text-white fw-bold">
+              <a href="index.html" style="text-decoration: none">Vibe.io</a>
+            </div>
             <nav class="d-flex gap-3">
               <a href="about.html" class="small text-decoration-none">About</a>
-              <a href="guidelines.html" class="small text-decoration-none">Guidelines</a>
-              <a href="contact.html" class="small text-decoration-none">Contact</a>
+              <a href="guidelines.html" class="small text-decoration-none"
+                >Guidelines</a
+              >
+              <a href="contact.html" class="small text-decoration-none"
+                >Contact</a
+              >
             </nav>
           </div>
-          <div class="col-md-6 mt-3 mt-md-0 d-flex align-items-center gap-3 justify-content-md-end">
+          <div
+            class="col-md-6 mt-3 mt-md-0 d-flex align-items-center gap-3 justify-content-md-end"
+          >
             <a href="#" class="p-2 rounded"><i data-lucide="github"></i></a>
             <a href="#" class="p-2 rounded"><i data-lucide="twitter"></i></a>
             <a href="#" class="p-2 rounded"><i data-lucide="linkedin"></i></a>
-            <div class="small text-muted-2">© 2025 Vibe.io - Built by students, for students.</div>
+            <div class="small text-muted-2">
+              © 2025 Vibe.io - Built by students, for students.
+            </div>
           </div>
         </div>
       </div>
     </footer>
-  <script>
-    // Supabase config
-    const SUPABASE_URL = 'https://poekchmrknttynedwpwm.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script>
+      // Create a single shared Supabase client instance
+      const SUPABASE_URL = "https://poekchmrknttynedwpwm.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZWtjaG1ya250dHluZWR3cHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyMjMwOTYsImV4cCI6MjA3Mjc5OTA5Nn0.zKMf44M_MKtWVp0U5HCG-QuB7hbxUUu_Mw-xJ-m50tA";
 
-    function isLoggedIn() {
-      return !!localStorage.getItem('vibe_logged_in');
-    }
-
-    async function fetchVoteCount(project) {
-      const { data, error } = await supabase
-        .from('project_votes')
-        .select('votes')
-        .eq('project_id', project)
-        .single();
-      if (error || !data) return 0;
-      return data.votes;
-    }
-
-    async function setVoteCountDisplay(project, count) {
-      const el = document.getElementById('vote-' + project);
-      if (el) el.textContent = count;
-    }
-
-    async function incrementVote(project) {
-      // Upsert vote count
-      const { data, error } = await supabase.rpc('increment_project_vote', { project_id_input: project });
-      if (error) {
-        alert('Vote failed. Try again later.');
-        return;
+      // Create shared client
+      if (
+        !window.vibeSupabaseClient &&
+        window.supabase &&
+        typeof window.supabase.createClient === "function"
+      ) {
+        window.vibeSupabaseClient = window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_KEY
+        );
       }
-      setVoteCountDisplay(project, data);
-    }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize vote counts from Supabase
-      ['omega', 'sigma'].forEach(async function(project) {
-        const count = await fetchVoteCount(project);
-        setVoteCountDisplay(project, count);
+      // Create alias for compatibility
+      const supabaseClient = window.vibeSupabaseClient;
+
+      function isLoggedIn() {
+        return !!localStorage.getItem("vibe_logged_in");
+      }
+
+      async function fetchVoteCount(project) {
+        if (!supabaseClient) return 0;
+        const { data, error } = await supabaseClient
+          .from("project_votes")
+          .select("votes")
+          .eq("project_id", project)
+          .single();
+        if (error || !data) return 0;
+        return data.votes;
+      }
+
+      async function setVoteCountDisplay(project, count) {
+        const el = document.getElementById("vote-" + project);
+        if (el) el.textContent = count;
+      }
+
+      async function incrementVote(project) {
+        if (!supabaseClient) return;
+        // Upsert vote count
+        const { data, error } = await supabaseClient.rpc(
+          "increment_project_vote",
+          { project_id_input: project }
+        );
+        if (error) {
+          alert("Vote failed. Try again later.");
+          return;
+        }
+        setVoteCountDisplay(project, data);
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize vote counts from Supabase
+        ["omega", "sigma"].forEach(async function (project) {
+          const count = await fetchVoteCount(project);
+          setVoteCountDisplay(project, count);
+        });
+        // Handle vote button click
+        document.querySelectorAll(".vote-btn").forEach(function (btn) {
+          btn.addEventListener("click", async function () {
+            var project = btn.getAttribute("data-project");
+            if (!isLoggedIn()) {
+              alert("You must be logged in to vote!");
+              return;
+            }
+            await incrementVote(project);
+          });
+        });
       });
-      // Handle vote button click
-      document.querySelectorAll('.vote-btn').forEach(function(btn) {
-        btn.addEventListener('click', async function() {
-          var project = btn.getAttribute('data-project');
-          if (!isLoggedIn()) {
-            alert('You must be logged in to vote!');
-            return;
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // Ensure Lucide icons render after DOM ready
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== "undefined") lucide.replace();
+      });
+
+      // Show login state in navbar (reads localStorage flag set by login page)
+      (function updateNavAuth() {
+        try {
+          const nav = document.getElementById("nav-auth-area");
+          if (!nav) return;
+          const authRaw = localStorage.getItem("vibe_logged_in");
+          if (!authRaw) return; // nothing to do
+          const auth = JSON.parse(authRaw);
+
+          // Remove login/signup elements from the DOM (not just hide) so they don't appear anywhere
+          const loginBtn = document.getElementById("nav-login");
+          const signupBtn = document.getElementById("nav-signup");
+          if (loginBtn && loginBtn.parentNode)
+            loginBtn.parentNode.removeChild(loginBtn);
+          if (signupBtn && signupBtn.parentNode)
+            signupBtn.parentNode.removeChild(signupBtn);
+
+          // Also remove any other anchors that link to login.html to cover other nav placements
+          document
+            .querySelectorAll('a[href$="/login.html"], a[href="login.html"]')
+            .forEach((a) => {
+              if (a && a.parentNode) a.parentNode.removeChild(a);
+            });
+
+          // Create a simple profile icon, email badge, and logout button
+          const wrapper = document.createElement("div");
+          wrapper.className = "d-flex align-items-center gap-2";
+
+          // Profile link with circular avatar (first initial)
+          const profileLink = document.createElement("a");
+          profileLink.href = "profile.html";
+          profileLink.title = "Profile";
+          profileLink.className =
+            "d-flex align-items-center text-decoration-none";
+          const avatar = document.createElement("div");
+          avatar.className =
+            "rounded-circle bg-white text-dark d-flex align-items-center justify-content-center";
+          avatar.style.width = "34px";
+          avatar.style.height = "34px";
+          avatar.style.fontWeight = "600";
+          avatar.style.fontSize = "0.9rem";
+          const displayName =
+            auth.name ||
+            auth.fullName ||
+            (auth.email ? auth.email.split("@")[0] : "User");
+          avatar.textContent = (displayName || "U").charAt(0).toUpperCase();
+          profileLink.appendChild(avatar);
+
+          const badge = document.createElement("div");
+          badge.className = "small text-muted-2 d-none d-sm-block";
+          badge.textContent = displayName || auth.email || "You";
+
+          const logout = document.createElement("button");
+          logout.className = "btn btn-outline-light btn-sm";
+          logout.textContent = "Logout";
+          logout.addEventListener("click", () => {
+            localStorage.removeItem("vibe_logged_in");
+            try {
+              if (
+                window.supabase &&
+                typeof supabase.createClient === "function"
+              ) {
+                const client = supabase.createClient(
+                  "https://poekchmrknttynedwpwm.supabase.co",
+                  "public"
+                );
+                if (client?.auth?.signOut)
+                  client.auth.signOut().catch(() => {});
+              }
+            } catch (e) {}
+            window.location.reload();
+          });
+
+          wrapper.appendChild(profileLink);
+          wrapper.appendChild(badge);
+          wrapper.appendChild(logout);
+          nav.appendChild(wrapper);
+        } catch (err) {
+          console.error("Auth nav update failed", err);
+        }
+      })();
+
+      // Smooth scrolling with header offset (for in-page links)
+      function offsetScrollTo(hash) {
+        const el = document.querySelector(hash);
+        if (!el) return;
+        const y =
+          el.getBoundingClientRect().top +
+            window.pageYOffset -
+            parseInt(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                "--header-height"
+              )
+            ) || 72;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+
+      // Intercept in-page anchors
+      document.querySelectorAll('a[href^="#"]').forEach((a) => {
+        a.addEventListener("click", (e) => {
+          const href = a.getAttribute("href");
+          if (href && href.length > 1 && href.startsWith("#")) {
+            const target = href;
+            const el = document.querySelector(target);
+            if (el) {
+              e.preventDefault();
+              offsetScrollTo(target);
+              // Close Bootstrap navbar after navigation (mobile)
+              const navbarCollapse = document.querySelector(".navbar-collapse");
+              if (navbarCollapse && navbarCollapse.classList.contains("show")) {
+                const instance =
+                  bootstrap.Collapse.getInstance(navbarCollapse) ||
+                  new bootstrap.Collapse(navbarCollapse, { toggle: false });
+                instance.hide();
+              }
+            }
           }
-          await incrementVote(project);
         });
       });
-    });
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-  <script>
-    // Ensure Lucide icons render after DOM ready
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof lucide !== 'undefined') lucide.replace();
-    });
-
-    // Show login state in navbar (reads localStorage flag set by login page)
-    (function updateNavAuth() {
-      try {
-        const nav = document.getElementById('nav-auth-area');
-        if (!nav) return;
-        const authRaw = localStorage.getItem('vibe_logged_in');
-        if (!authRaw) return; // nothing to do
-        const auth = JSON.parse(authRaw);
-
-        // Remove login/signup elements from the DOM (not just hide) so they don't appear anywhere
-        const loginBtn = document.getElementById('nav-login');
-        const signupBtn = document.getElementById('nav-signup');
-        if (loginBtn && loginBtn.parentNode) loginBtn.parentNode.removeChild(loginBtn);
-        if (signupBtn && signupBtn.parentNode) signupBtn.parentNode.removeChild(signupBtn);
-
-        // Also remove any other anchors that link to login.html to cover other nav placements
-        document.querySelectorAll('a[href$="/login.html"], a[href="login.html"]').forEach(a => {
-          if (a && a.parentNode) a.parentNode.removeChild(a);
-        });
-
-        // Create a simple profile icon, email badge, and logout button
-        const wrapper = document.createElement('div');
-        wrapper.className = 'd-flex align-items-center gap-2';
-
-        // Profile link with circular avatar (first initial)
-        const profileLink = document.createElement('a');
-        profileLink.href = 'profile.html';
-        profileLink.title = 'Profile';
-        profileLink.className = 'd-flex align-items-center text-decoration-none';
-        const avatar = document.createElement('div');
-        avatar.className = 'rounded-circle bg-white text-dark d-flex align-items-center justify-content-center';
-        avatar.style.width = '34px';
-        avatar.style.height = '34px';
-        avatar.style.fontWeight = '600';
-        avatar.style.fontSize = '0.9rem';
-  const displayName = auth.name || auth.fullName || (auth.email ? auth.email.split('@')[0] : 'User');
-  avatar.textContent = (displayName || 'U').charAt(0).toUpperCase();
-        profileLink.appendChild(avatar);
-
-        const badge = document.createElement('div');
-        badge.className = 'small text-muted-2 d-none d-sm-block';
-  badge.textContent = displayName || auth.email || 'You';
-
-        const logout = document.createElement('button');
-        logout.className = 'btn btn-outline-light btn-sm';
-        logout.textContent = 'Logout';
-        logout.addEventListener('click', () => {
-          localStorage.removeItem('vibe_logged_in');
-          try {
-            if (window.supabase && typeof supabase.createClient === 'function') {
-              const client = supabase.createClient('https://poekchmrknttynedwpwm.supabase.co','public');
-              if (client?.auth?.signOut) client.auth.signOut().catch(()=>{});
-            }
-          } catch(e){}
-          window.location.reload();
-        });
-
-        wrapper.appendChild(profileLink);
-        wrapper.appendChild(badge);
-        wrapper.appendChild(logout);
-        nav.appendChild(wrapper);
-      } catch (err) {
-        console.error('Auth nav update failed', err);
-      }
-    })();
-
-    // Smooth scrolling with header offset (for in-page links)
-    function offsetScrollTo(hash) {
-      const el = document.querySelector(hash);
-      if (!el) return;
-      const y = el.getBoundingClientRect().top + window.pageYOffset - parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 72;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-
-    // Intercept in-page anchors
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', (e) => {
-        const href = a.getAttribute('href');
-        if (href && href.length > 1 && href.startsWith('#')) {
-          const target = href;
-          const el = document.querySelector(target);
-          if (el) {
-            e.preventDefault();
-            offsetScrollTo(target);
-            // Close Bootstrap navbar after navigation (mobile)
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-              const instance = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse, { toggle: false });
-              instance.hide();
-            }
+      // Accessibility: close navbar with Escape
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          const navbarCollapse = document.querySelector(".navbar-collapse");
+          if (navbarCollapse && navbarCollapse.classList.contains("show")) {
+            const instance =
+              bootstrap.Collapse.getInstance(navbarCollapse) ||
+              new bootstrap.Collapse(navbarCollapse, { toggle: false });
+            instance.hide();
           }
         }
       });
-    });
-
-    // Accessibility: close navbar with Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        const navbarCollapse = document.querySelector('.navbar-collapse');
-        if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-          const instance = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse, { toggle: false });
-          instance.hide();
-        }
-      }
-    });
-  </script>
-  <script src="assets/js/projects.js"></script>
-  <script src="assets/js/discord-fab.js"></script>
-</body>
+    </script>
+    <script src="assets/js/projects.js"></script>
+    <script src="assets/js/discord-fab.js"></script>
+  </body>
 </html>
